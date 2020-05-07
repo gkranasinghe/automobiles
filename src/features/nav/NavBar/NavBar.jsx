@@ -9,6 +9,7 @@ import {
   makeStyles,
   Container,
   CssBaseline,
+  Hidden,
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import logo from '../../../assets/images/rsz_logo.png';
@@ -24,6 +25,11 @@ const useHeaderStyles = makeStyles((theme) => ({
   },
   logo: {
     '&:img': { height: '32px', width: '32px', marginTop: '-4px' },
+    [theme.breakpoints.down(1360)]: {
+      marginLeft: '40px',
+    },
+    flexGrow: 1,
+    border: '1px red solid',
   },
   menuButton: {
     position: 'absolute',
@@ -33,18 +39,16 @@ const useHeaderStyles = makeStyles((theme) => ({
     marginLeft: theme.spacing(2),
   },
   title: {
-    flexGrow: 1,
+    //
     padding: theme.spacing(0.5),
     display: 'block',
     verticalAlign: 'center',
     whiteSpace: 'noWrap',
     // border: '1px red solid',
-    [theme.breakpoints.down(1360)]: {
-      marginLeft: '40px',
-    },
   },
   loginButton: {
     margin: `${theme.spacing(0)} ${theme.spacing(0.5)}`,
+    whiteSpace: 'noWrap',
   },
 }));
 
@@ -63,11 +67,44 @@ const NavBar = () => {
             <MenuIcon />
           </IconButton>
           <Container maxWidth='lg'>
-            <Grid container alignItems='center' justify='center'>
-              <Typography className={headerStyles.title}>News</Typography>
-              <Button color='inherit' className={headerStyles.loginButton}>
-                Login
-              </Button>
+            <Grid
+              container
+              alignItems='center'
+              justify='space-between'
+              wrap='nowrap'
+            >
+              <Grid item className={headerStyles.logo}>
+                <Grid container wrap='nowrap'>
+                  <Button>
+                    <img src={logo} alt='logo' /> <Typography>News</Typography>
+                  </Button>
+                  <Hidden xsDown>
+                    <Button
+                      color='inherit'
+                      className={headerStyles.loginButton}
+                    >
+                      Login
+                    </Button>
+                    <Button
+                      color='inherit'
+                      className={headerStyles.loginButton}
+                    >
+                      Login
+                    </Button>
+                  </Hidden>
+                </Grid>
+              </Grid>
+
+              <Grid item>
+                <Grid container wrap='nowrap'>
+                  <Button color='inherit' className={headerStyles.loginButton}>
+                    Login
+                  </Button>
+                  <Button color='inherit' className={headerStyles.loginButton}>
+                    Sign up
+                  </Button>
+                </Grid>
+              </Grid>
             </Grid>
           </Container>
         </Toolbar>

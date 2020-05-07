@@ -6,7 +6,15 @@ class EventDashboard extends Component {
     return (
       <>
         <Container maxWidth='lg'>
-          <Typography>Left Column</Typography>
+          <Grid container>
+            <Grid xs={8}>
+              {' '}
+              <Typography>Left Column</Typography>
+            </Grid>
+            <Grid xs={4}>
+              <Typography>Right Column</Typography>
+            </Grid>
+          </Grid>
         </Container>
       </>
     );
