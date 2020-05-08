@@ -8,7 +8,6 @@ import {
   IconButton,
   makeStyles,
   Container,
-  CssBaseline,
   Hidden,
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -19,17 +18,25 @@ const useHeaderStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
 
-  appBar: {},
+  appBar: {
+    background:
+      'linear-gradient(135deg, rgb(24, 42, 115) 0%, rgb(33, 138, 174)69%, rgb(32, 167, 172)89%)',
+    '& .MuiButton-root': {
+      margin: '0rem 0.5rem 0rem',
+      fontSize: '1rem',
+      textTransform: 'none',
+    },
+  },
   toolBar: {
     //border: '1px red solid',
   },
   logo: {
-    '&:img': { height: '32px', width: '32px', marginTop: '-4px' },
+    '&:img': { height: '2rem', width: '2rem', marginTop: '-0.25rem' },
     [theme.breakpoints.down(1360)]: {
       marginLeft: '40px',
     },
     flexGrow: 1,
-    border: '1px red solid',
+    // border: '1px red solid',
   },
   menuButton: {
     position: 'absolute',
@@ -49,6 +56,9 @@ const useHeaderStyles = makeStyles((theme) => ({
   loginButton: {
     margin: `${theme.spacing(0)} ${theme.spacing(0.5)}`,
     whiteSpace: 'noWrap',
+    paddingBottom: 0.78571429,
+    paddingTop: 0.78571429,
+    fontSize: '1rem',
   },
 }));
 
@@ -83,13 +93,13 @@ const NavBar = () => {
                       color='inherit'
                       className={headerStyles.loginButton}
                     >
-                      Login
+                      Events
                     </Button>
                     <Button
                       color='inherit'
                       className={headerStyles.loginButton}
                     >
-                      Login
+                      People
                     </Button>
                   </Hidden>
                 </Grid>
@@ -97,10 +107,18 @@ const NavBar = () => {
 
               <Grid item>
                 <Grid container wrap='nowrap'>
-                  <Button color='inherit' className={headerStyles.loginButton}>
-                    Login
+                  <Button
+                    variant='outlined'
+                    color='inherit'
+                    className={headerStyles.loginButton}
+                  >
+                    Log in
                   </Button>
-                  <Button color='inherit' className={headerStyles.loginButton}>
+                  <Button
+                    variant='outlined'
+                    color='inherit'
+                    className={headerStyles.loginButton}
+                  >
                     Sign up
                   </Button>
                 </Grid>
