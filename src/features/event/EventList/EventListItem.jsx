@@ -15,6 +15,7 @@ import {
   Grid,
   Hidden,
   Divider,
+  Link,
 } from '@material-ui/core/';
 
 import { red } from '@material-ui/core/colors';
@@ -24,6 +25,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import WatchLaterIcon from '@material-ui/icons/WatchLater';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
+import EventListAttendee from './EventListAttendee';
 
 const useCardStyles = makeStyles((theme) => ({
   root: {
@@ -45,6 +47,7 @@ const useCardStyles = makeStyles((theme) => ({
   },
   avatar: {
     backgroundColor: red[500],
+    // alignSelf: 'flex-start',
   },
   eventInfo: {
     '& .MuiTypography-root': {
@@ -65,6 +68,10 @@ const useCardStyles = makeStyles((theme) => ({
       // margin: '-0.25rem 0.25rem 0rem 0rem',
     },
   },
+  locationIcon: {
+    marginRight: 4,
+    fontSize: 18,
+  },
 }));
 
 const usePeopleCardFooterStyles = makeStyles((theme) => ({
@@ -82,7 +89,17 @@ const usePeopleCardFooterStyles = makeStyles((theme) => ({
     width: '2rem',
   },
 }));
-const EventListItem = () => {
+
+const EventListItem = (props) => {
+  const { event } = props;
+
+  const date = new Date(event.date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  });
   const cardStyles = useCardStyles();
 
   const [expanded, setExpanded] = React.useState(false);
@@ -91,60 +108,46 @@ const EventListItem = () => {
     setExpanded(!expanded);
   };
   const eventInfo = (
-    <div className={cardStyles.eventInfo}>
-      <Grid container direction='column'>
-        <Grid item>
-          {' '}
-          <Typography variant='body2' color='textSecondary' gutterBottom>
-            Hosted by{' '}
-            <a href='#' style={{ color: '#4183c4', textDecoration: 'none' }}>
-              {' '}
-              <span>Gayan K</span>
-            </a>
-          </Typography>
-        </Grid>
-        <Grid item>
-          <Grid container direction='row'>
-            <Grid item>
-              <Grid container alignItems='center' wrap='nowrap'>
-                <WatchLaterIcon />
-                <Typography
-                  style={{ marginLeft: '0.5rem', marginRight: '0.5rem' }}
-                >
-                  {' '}
-                  Today, 1:00 PM
-                </Typography>
-              </Grid>
-            </Grid>
-            <Hidden xsDown>
-              <Divider
-                style={{ marginLeft: '0.5rem', marginRight: '0.5rem' }}
-                orientation='vertical'
-                flexItem
-              />
-            </Hidden>
-            <Grid item>
-              <Grid container alignItems='center' wrap='nowrap'>
-                {' '}
-                <LocationOnIcon />
-                <Typography
-                  style={{ marginLeft: '0.5rem', marginRight: '0.5rem' }}
-                >
-                  London
-                </Typography>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-    </div>
+    <Box color={'grey.500'} display={'flex'} alignItems={'center'} ml={-0.55}>
+      <LocationOnIcon className={cardStyles.locationIcon} />
+      <span>{event.venue}</span>
+      {/* <Hidden xsDown> */}
+      <Divider
+        style={{ marginLeft: '0.5rem', marginRight: '0.5rem' }}
+        orientation='vertical'
+        flexItem
+      />
+      {/* </Hidden> */}
+      <WatchLaterIcon className={cardStyles.locationIcon} />
+      <span>{date}</span>
+      <Divider
+        style={{ marginLeft: '0.5rem', marginRight: '0.5rem' }}
+        orientation='vertical'
+        flexItem
+      />
+      <Box color={'grey.500'} display={'flex'} alignSelf='flex-end'>
+        <Typography variant='caption'>
+          <Link
+            color='textSecondary'
+            href='#'
+            onClick={(event) => event.preventDefault()}
+          >
+            Hosted By {event.hostedBy}
+          </Link>
+        </Typography>
+      </Box>
+    </Box>
   );
   return (
     <>
       <Card className={cardStyles.root}>
         <CardHeader
           avatar={
-            <Avatar aria-label='recipe' className={cardStyles.avatar}>
+            <Avatar
+              aria-label='recipe'
+              className={cardStyles.avatar}
+              src={event.hostPhotoURL}
+            >
               R
             </Avatar>
           }
@@ -153,9 +156,15 @@ const EventListItem = () => {
               <MoreVertIcon />
             </IconButton>
           }
-          title='Shrimp and Chorizo Paella'
+          title={
+            <Box color={'grey.500'} display={'flex'}>
+              <Typography variant='h6'>{event.title}</Typography>
+            </Box>
+          }
           subheader={eventInfo}
         />
+        <Divider orientation='horizontal' light />
+        <CardContent></CardContent>
 
         <CardMedia
           className={cardStyles.media}
@@ -163,14 +172,7 @@ const EventListItem = () => {
           title='Paella dish'
         />
         <Box px={3} pb={3}>
-          <PeopleCardFooter
-            faces={[
-              'https://i.pravatar.cc/300?img=1',
-              'https://i.pravatar.cc/300?img=2',
-              'https://i.pravatar.cc/300?img=3',
-              'https://i.pravatar.cc/300?img=4',
-            ]}
-          />
+          <PeopleCardFooter attendees={event.attendees} />
           <Typography
             component={'span'}
             variant={'body2'}
@@ -181,9 +183,7 @@ const EventListItem = () => {
         </Box>
         <CardContent>
           <Typography variant='body2' color='textSecondary' component='p'>
-            This impressive paella is a perfect party dish and a fun meal to
-            cook together with your guests. Add 1 cup of frozen peas along with
-            the mussels, if you like.
+            {event.description}
           </Typography>
         </CardContent>
         <CardActions disableSpacing>
@@ -241,24 +241,22 @@ const EventListItem = () => {
   );
 };
 
-const PeopleCardFooter = ({ faces, noDivider }) => {
+const PeopleCardFooter = ({ attendees, noDivider }) => {
   const peopleCardFooterStyles = usePeopleCardFooterStyles();
+
   return (
     <>
       {!noDivider && (
         <Divider className={peopleCardFooterStyles.divider} light />
       )}
-      {/* <FaceGroup faces={faces} /> */}
-      {faces.map((face) => {
-        return (
-          <>
-            <img className={peopleCardFooterStyles.person} src={face} alt='' />
-          </>
-        );
+
+      {attendees.map((attendee) => {
+        return <EventListAttendee key={attendee.id} attendee={attendee} />;
       })}
     </>
   );
 };
+
 // PeopleCardFooter.propTypes = {
 //   faces: PropTypes.arrayOf(PropTypes.string),
 //   noDivider: PropTypes.bool,

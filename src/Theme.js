@@ -5,10 +5,10 @@ const arcOrange = '#ffba60';
 
 const theme = createMuiTheme({
   palette: {
-    // common: {
-    //   blue: `${arcBlue}`,
-    //   orange: `${arcOrange}`,
-    // },
+    common: {
+      blue: `${arcBlue}`,
+      orange: `${arcOrange}`,
+    },
     primary: {
       main: `${arcBlue}`,
     },
@@ -31,8 +31,11 @@ const theme = createMuiTheme({
       '"Segoe UI Symbol"',
     ].join(','),
     body1: {
-      fontWeight: 400,
-      fontSize: '0.8rem',
+      // fontWeight: 400,
+      // fontSize: '0.8rem',
+    },
+    h5: {
+      // fontFamily: 'Fira Sans',
     },
     content: {},
   },
