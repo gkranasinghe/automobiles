@@ -1,38 +1,37 @@
 import React, { useState } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import { NavLink } from 'react-router-dom';
-import axios from 'axios';
-import { Formik, Form, Field, FastField, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import { makeStyles } from '@material-ui/styles';
-import { Typography, Box } from '@material-ui/core';
-// import { DisplayFormikState } from './formikHelper';
-import InputLabel from '@material-ui/core/InputLabel';
-import 'date-fns';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-import Grid from '@material-ui/core/Grid';
-import Container from '@material-ui/core/Container';
-import Paper from '@material-ui/core/Paper';
+import {
+  TextField,
+  Button,
+  Typography,
+  Grid,
+  Box,
+  Snackbar,
+  CircularProgress,
+  Paper,
+} from '@material-ui/core/';
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
-  KeyboardTimePicker,
+  //KeyboardTimePicker,
   KeyboardDatePicker,
-  DateTimePicker,
+  //DateTimePicker,
 } from '@material-ui/pickers';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
-import Input from '@material-ui/core/Input';
-import { useField } from 'formik';
-import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import { makeStyles } from '@material-ui/styles';
+import { Formik, Form } from 'formik'; //ErrorMessage, Field, FastField
+import * as Yup from 'yup';
+import 'date-fns';
+
+import { NavLink } from 'react-router-dom';
+import axios from 'axios';
+
+// import { DisplayFormikState } from './formikHelper';
+
+// import Checkbox from '@material-ui/core/Checkbox';
+// import FormGroup from '@material-ui/core/FormGroup';
+// import FormControlLabel from '@material-ui/core/FormControlLabel';
+// import FormControl from '@material-ui/core/FormControl';
+// import FormLabel from '@material-ui/core/FormLabel';
 
 const useFormStyles = makeStyles((theme) => ({
   textField: {
@@ -129,7 +128,6 @@ const useFormStyles = makeStyles((theme) => ({
     marginLeft: -12,
   },
   wrapper: {
-    // margin: theme.spacing(1),
     position: 'relative',
   },
 }));
@@ -222,7 +220,6 @@ const EnquiryPage = (props) => {
 
 const EnquiryForm = (props) => {
   const {
-    form,
     values,
     touched,
     errors,
@@ -234,36 +231,10 @@ const EnquiryForm = (props) => {
     handleReset,
   } = props;
 
-  const DatePickerField = ({ field, form, ...other }) => {
-    const onChange = (date) => {
-      form.setFieldTouched(field.name, true, true);
-      form.setFieldValue(field.name, date, true);
-      console.log(date);
-    };
-    return (
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <KeyboardDatePicker
-          inputVariant='outlined'
-          label='event date *'
-          variant='inline'
-          fullWidth
-          clearable
-          disablePast
-          format='MM/dd/yyyy'
-          name={field.name}
-          value={field.value}
-          // if you are using custom validation schema you probably want to pass `true` as third argument
-          onChange={(date) => onChange(date)}
-          {...other}
-        />
-      </MuiPickersUtilsProvider>
-    );
-  };
-
   const formStyles = useFormStyles();
 
   return (
-    <Container maxWidth='xs'>
+    <Box mt={3} px={3}>
       <Typography className={formStyles.title}>Get in touch</Typography>
       <Typography className={formStyles.content}>
         We believe you'll get the best advice by talking to someone who has been
@@ -361,7 +332,7 @@ const EnquiryForm = (props) => {
             <Button
               variant='outlined'
               size='medium'
-             // color='secondary'
+              // color='secondary'
               onClick={handleReset}
               disabled={!dirty || isSubmitting}
             >
@@ -396,7 +367,7 @@ const EnquiryForm = (props) => {
         <pre>{JSON.stringify(errors, null, 4)}</pre>
         <pre>{JSON.stringify(values, null, 4)}</pre>
       </Form>
-    </Container>
+    </Box>
   );
 };
 
