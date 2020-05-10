@@ -135,7 +135,7 @@ const useFormStyles = makeStyles((theme) => ({
 //const enquiryFormEndpoint = process.env.AUTOMOBILE_APP_ENQUIRY_ENDPOINT;
 
 const EnquiryPage = (props) => {
-  //Do we need to write props as a argument
+  //Do we need to write props as a argument yes 
 
   // const onSubmit = (values, { dispatch, setSubmitting }) => {
   //   console.log('onSubmit -> dispatch', dispatch);
@@ -200,11 +200,8 @@ const EnquiryPage = (props) => {
           initialValues={initialValues}
           onSubmit={(values, actions) => {
             setTimeout(() => {
-              props.dispatch(allActions.createEvent(values));
-              console.log(
-                'allActions.eventActions.createEvent',
-                allActions.createEvent
-              );
+              props.dispatch(allActions.eventActions.createEvent(values));
+              console.log('allActions.createEvent', allActions.createEvent);
 
               alert(JSON.stringify(values, null, 2));
               actions.setSubmitting(false);

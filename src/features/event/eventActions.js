@@ -1,8 +1,8 @@
 const createEvent = (event) => {
-  return ({
+  return {
     type: 'CREATE_EVENT',
     payload: event,
-  });
+  };
 };
 
-export default createEvent;
+export default { createEvent };

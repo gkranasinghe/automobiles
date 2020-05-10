@@ -5,17 +5,18 @@ import {
   FETCH_EVENTS,
 } from './eventConstants';
 
-const initialState = {};
+const initialState = [];
 
 const createEvent = (state = initialState, { type, payload }) => {
   switch (type) {
     case CREATE_EVENT:
       console.log('createEvent -> payload', payload);
-      return Object.assign({}, state, payload);
+      // return Object.assign({}, state, payload);
+      return [...state, payload];
     case UPDATE_EVENT:
       return [
         ...state.filter((event) => event.id !== payload.id),
-        ...payload,
+        payload,
         // Object.assign({}, payload),
       ];
     case DELETE_EVENT:
