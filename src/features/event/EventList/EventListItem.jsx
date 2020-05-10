@@ -91,6 +91,12 @@ const usePeopleCardFooterStyles = makeStyles((theme) => ({
 }));
 
 const EventListItem = (props) => {
+  EventListItem.defaultProps = {
+    venue: '',
+    date: undefined,
+    hostedBy: '',
+    hostPhotoURL: '',
+  };
   const { event } = props;
 
   const date = new Date(event.date).toLocaleDateString('en-US', {
@@ -99,6 +105,8 @@ const EventListItem = (props) => {
     day: 'numeric',
     hour: 'numeric',
     minute: 'numeric',
+    title: '',
+    attendees: [],
   });
   const cardStyles = useCardStyles();
 
@@ -250,9 +258,11 @@ const PeopleCardFooter = ({ attendees, noDivider }) => {
         <Divider className={peopleCardFooterStyles.divider} light />
       )}
 
-      {attendees.map((attendee) => {
-        return <EventListAttendee key={attendee.id} attendee={attendee} />;
-      })}
+      {Array.isArray(attendees) && attendees.length
+        ? attendees.map((attendee) => {
+            return <EventListAttendee key={attendee.id} attendee={attendee} />;
+          })
+        : null}
     </>
   );
 };

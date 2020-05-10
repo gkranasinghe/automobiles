@@ -33,10 +33,9 @@ const EventDashboard = () => {
           <Grid item xs>
             <Box mb={3}>
               <Typography>Left Column</Typography>
-              {/* {Array.isArray(events) && events.length ? (
+              {Array.isArray(events) && events.length ? (
                 <EventList events={events} />
-              ) : null} */}
-              {/* {events} */}
+              ) : null}
             </Box>
           </Grid>
           <Grid item xs={matchXS ? '12' : '4'}>
