@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import allActions from '../../../app/actions';
 import {
   TextField,
   Button,
@@ -131,10 +132,17 @@ const useFormStyles = makeStyles((theme) => ({
     position: 'relative',
   },
 }));
-const enquiryFormEndpoint = process.env.AUTOMOBILE_APP_ENQUIRY_ENDPOINT;
+//const enquiryFormEndpoint = process.env.AUTOMOBILE_APP_ENQUIRY_ENDPOINT;
 
 const EnquiryPage = (props) => {
   //Do we need to write props as a argument
+
+  // const onSubmit = (values, { dispatch, setSubmitting }) => {
+  //   console.log('onSubmit -> dispatch', dispatch);
+  //   console.log('onSubmit -> values', values);
+
+  //   dispatch(allActions.eventActions.createEvent(values));
+  // };
 
   const [isSubmitionCompleted, setSubmitionCompleted] = useState(false);
 
@@ -148,24 +156,24 @@ const EnquiryPage = (props) => {
     setOpen(false);
   }
 
-  const onSubmit = (values, { setSubmitting }) => {
-    setSubmitting(true);
-    console.log(values);
-    axios
-      .post(enquiryFormEndpoint, values, {
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json',
-        },
-      })
-      .then((resp) => {
-        setSubmitionCompleted(true);
-        setOpen(true);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  // const onSubmit = (values, { setSubmitting }) => {
+  //   setSubmitting(true);
+  //   console.log(values);
+  //   axios
+  //     .post(enquiryFormEndpoint, values, {
+  //       headers: {
+  //         'Access-Control-Allow-Origin': '*',
+  //         'Content-Type': 'application/json',
+  //       },
+  //     })
+  //     .then((resp) => {
+  //       setSubmitionCompleted(true);
+  //       setOpen(true);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // };
 
   const validationSchema = Yup.object().shape({
     eventName: Yup.string().required('Required'),
@@ -190,7 +198,18 @@ const EnquiryPage = (props) => {
       {!isSubmitionCompleted && (
         <Formik
           initialValues={initialValues}
-          onSubmit={onSubmit}
+          onSubmit={(values, actions) => {
+            setTimeout(() => {
+              props.dispatch(allActions.createEvent(values));
+              console.log(
+                'allActions.eventActions.createEvent',
+                allActions.createEvent
+              );
+
+              alert(JSON.stringify(values, null, 2));
+              actions.setSubmitting(false);
+            }, 1000);
+          }}
           validationSchema={validationSchema}
           render={(props) => <EnquiryForm {...props} />}
         ></Formik>
@@ -340,7 +359,6 @@ const EnquiryForm = (props) => {
             </Button>
           </Grid>
           <Grid item>
-            {' '}
             <div className={formStyles.wrapper}>
               <Button
                 variant='contained'
