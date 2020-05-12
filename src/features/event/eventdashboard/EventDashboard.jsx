@@ -8,8 +8,8 @@ import {
   Box,
   useMediaQuery,
 } from '@material-ui/core';
-import EventList from '../EventList/EventList';
-import EnquiryPage from '../EventForm/EventForm';
+import EventList from '../eventlist/EventList';
+import EnquiryPage from '../eventform/EventForm';
 import { useTheme } from '@material-ui/core/styles';
 
 const EventDashboard = () => {
