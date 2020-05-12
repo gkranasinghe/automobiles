@@ -3,15 +3,34 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import { configureStore } from './app/store/configureStore';
 import { Provider } from 'react-redux';
+import { ReactReduxFirebaseProvider } from 'react-redux-firebase';
+import firebase from './app/config/firebase';
+import { createFirestoreInstance } from 'redux-firestore';
 import App from './app/layout/App';
 import * as serviceWorker from './serviceWorker';
 
 const store = configureStore();
+const rrfConfig = {
+  userProfile: 'users', // where profiles are stored in database
+  // presence: 'presence', // where list of online users is stored in database
+  // sessions: 'sessions',
+  useFirestoreForProfile: true,
+  // attachAuthIsReady: true,
+  // updateProfileOnLogin: false,
+};
+const rrfProps = {
+  firebase,
+  config: rrfConfig,
+  dispatch: store.dispatch,
+  createFirestoreInstance, //since we are using Firestore
+};
 
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <ReactReduxFirebaseProvider {...rrfProps}>
+        <App />
+      </ReactReduxFirebaseProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')
