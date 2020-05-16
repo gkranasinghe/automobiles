@@ -13,8 +13,12 @@ import EnquiryPage from '../eventform/EventForm';
 import { useTheme } from '@material-ui/core/styles';
 
 const EventDashboard = () => {
-  const events = useSelector((state) => state.events);
-  console.log('EventDashboard -> events ', events);
+  // const { displayName, uid } = useSelector((state) => state.firebase.auth);
+  // console.log('EventDashboard -> uid', uid);
+
+  // const events = useSelector((state) => state.events);
+  // console.log('EventDashboard -> events ', events);
+
   const dispatch = useDispatch();
   console.log('EventDashboard -> dispatch', dispatch);
 
@@ -33,9 +37,7 @@ const EventDashboard = () => {
           <Grid item xs>
             <Box mb={3}>
               <Typography>Left Column</Typography>
-              {Array.isArray(events) && events.length ? (
-                <EventList events={events} />
-              ) : null}
+              <EventList />
             </Box>
           </Grid>
           <Grid item xs={matchXS ? '12' : '4'}>

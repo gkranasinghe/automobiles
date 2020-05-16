@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useFirestore } from 'react-redux-firebase';
+import { useSelector } from 'react-redux';
 import allActions from '../../../app/actions';
 import {
   TextField,
@@ -134,16 +136,27 @@ const useFormStyles = makeStyles((theme) => ({
 }));
 //const enquiryFormEndpoint = process.env.AUTOMOBILE_APP_ENQUIRY_ENDPOINT;
 
-const EnquiryPage = (props) => {
-  //Do we need to write props as a argument yes 
-
+const EnquiryPage = ({
+  initialValues = {
+    eventName: '',
+    eventDate: null,
+    city: '',
+    venue: '',
+    hostedBy: '',
+    // email: '',
+  },
+  ...rest
+}) => {
+  //Do we need to write props as a argument yes
+  console.log('initialValues_', initialValues);
   // const onSubmit = (values, { dispatch, setSubmitting }) => {
   //   console.log('onSubmit -> dispatch', dispatch);
   //   console.log('onSubmit -> values', values);
 
   //   dispatch(allActions.eventActions.createEvent(values));
   // };
-
+  const firestore = useFirestore();
+  const { uid } = useSelector((state) => state.firebase.auth);
   const [isSubmitionCompleted, setSubmitionCompleted] = useState(false);
 
   function Alert(props) {
@@ -184,14 +197,14 @@ const EnquiryPage = (props) => {
     // email: Yup.string().email().required('Required'),
   });
 
-  const initialValues = {
-    eventName: '',
-    eventDate: null,
-    city: '',
-    venue: '',
-    hostedBy: '',
-    // email: '',
-  };
+  // const initialValues = {
+  //   eventName: '',
+  //   eventDate: null,
+  //   city: '',
+  //   venue: '',
+  //   hostedBy: '',
+  //   // email: '',
+  // };
 
   return (
     <React.Fragment>
@@ -199,13 +212,25 @@ const EnquiryPage = (props) => {
         <Formik
           initialValues={initialValues}
           onSubmit={(values, actions) => {
-            setTimeout(() => {
-              props.dispatch(allActions.eventActions.createEvent(values));
-              console.log('allActions.createEvent', allActions.createEvent);
+            // submit the values to users/{uid}/listings collection
+            // check UID is set
+            firestore
+              .collection('users')
+              .doc(uid)
+              .collection('listings')
+              .add({ ...values, isSold: false })
+              .then((docRef) => {
+                docRef.update({
+                  listingID: docRef.id,
+                });
+              });
 
-              alert(JSON.stringify(values, null, 2));
-              actions.setSubmitting(false);
-            }, 1000);
+            // setTimeout(() => {
+            //   props.dispatch(allActions.eventActions.createEvent(values));
+            //   console.log('allActions.createEvent', allActions.createEvent);
+            //   alert(JSON.stringify(values, null, 2));
+            actions.setSubmitting(false);
+            // }, 1000);
           }}
           validationSchema={validationSchema}
           render={(props) => <EnquiryForm {...props} />}

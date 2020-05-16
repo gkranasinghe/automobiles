@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import {
@@ -91,64 +92,61 @@ const usePeopleCardFooterStyles = makeStyles((theme) => ({
 }));
 
 const EventListItem = (props) => {
-  EventListItem.defaultProps = {
-    venue: '',
-    date: undefined,
-    hostedBy: '',
-    hostPhotoURL: '',
-  };
-  const { event } = props;
-
-  const date = new Date(event.date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    title: '',
-    attendees: [],
-  });
   const cardStyles = useCardStyles();
+  //const { listing } = props;
+  console.log('EventListItem -> event', props.listing);
 
-  const [expanded, setExpanded] = React.useState(false);
+  // const date = new Date(event.date).toLocaleDateString('en-US', {
+  //   year: 'numeric',
+  //   month: 'long',
+  //   day: 'numeric',
+  //   hour: 'numeric',
+  //   minute: 'numeric',
+  //   title: '',
+  //   attendees: [],
+  // });
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
-  };
-  const eventInfo = (
-    <Box color={'grey.500'} display={'flex'} alignItems={'center'} ml={-0.55}>
-      <LocationOnIcon className={cardStyles.locationIcon} />
-      <span>{event.venue}</span>
-      {/* <Hidden xsDown> */}
-      <Divider
-        style={{ marginLeft: '0.5rem', marginRight: '0.5rem' }}
-        orientation='vertical'
-        flexItem
-      />
-      {/* </Hidden> */}
-      <WatchLaterIcon className={cardStyles.locationIcon} />
-      <span>{date}</span>
-      <Divider
-        style={{ marginLeft: '0.5rem', marginRight: '0.5rem' }}
-        orientation='vertical'
-        flexItem
-      />
-      <Box color={'grey.500'} display={'flex'} alignSelf='flex-end'>
-        <Typography variant='caption'>
-          <Link
-            color='textSecondary'
-            href='#'
-            onClick={(event) => event.preventDefault()}
-          >
-            Hosted By {event.hostedBy}
-          </Link>
-        </Typography>
-      </Box>
-    </Box>
-  );
+  // const [expanded, setExpanded] = React.useState(false);
+
+  // const handleExpandClick = () => {
+  //   setExpanded(!expanded);
+  // };
+  // const eventInfo = (
+  //   <Box color={'grey.500'} display={'flex'} alignItems={'center'} ml={-0.55}>
+  //     <LocationOnIcon className={cardStyles.locationIcon} />
+  //     <span>{event.venue}</span>
+  //     {/* <Hidden xsDown> */}
+  //     <Divider
+  //       style={{ marginLeft: '0.5rem', marginRight: '0.5rem' }}
+  //       orientation='vertical'
+  //       flexItem
+  //     />
+  //     {/* </Hidden> */}
+  //     <WatchLaterIcon className={cardStyles.locationIcon} />
+  //     <span>{date}</span>
+  //     <Divider
+  //       style={{ marginLeft: '0.5rem', marginRight: '0.5rem' }}
+  //       orientation='vertical'
+  //       flexItem
+  //     />
+  //     <Box color={'grey.500'} display={'flex'} alignSelf='flex-end'>
+  //       <Typography variant='caption'>
+  //         <Link
+  //           color='textSecondary'
+  //           href='#'
+  //           onClick={(event) => event.preventDefault()}
+  //         >
+  //           Hosted By {event.hostedBy}
+  //         </Link>
+  //       </Typography>
+  //     </Box>
+  //   </Box>
+  // );
   return (
     <>
-      <Card className={cardStyles.root}>
+      <h1>{props.listing.listingID}</h1>
+
+      {/* <Card className={cardStyles.root}>
         <CardHeader
           avatar={
             <Avatar
@@ -244,11 +242,17 @@ const EventListItem = (props) => {
             </Typography>
           </CardContent>
         </Collapse>
-      </Card>
+      </Card> */}
     </>
   );
 };
 
+// EventListItem.defaultProps = {
+//   venue: '',
+//   date: undefined,
+//   hostedBy: '',
+//   hostPhotoURL: '',
+// };
 const PeopleCardFooter = ({ attendees, noDivider }) => {
   const peopleCardFooterStyles = usePeopleCardFooterStyles();
 

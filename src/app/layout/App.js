@@ -4,8 +4,11 @@ import theme from '../../Theme';
 
 import HomePage from '../../features/home/HomePage';
 import EventDashBoard from '../../features/event/eventdashboard/EventDashboard.jsx';
+import UserListings from '../../features/user/userdetailed/UserListings';
 import NavBar from '../../features/nav/NavBar/NavBar';
-import {BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { isLoaded, isEmpty } from 'react-redux-firebase';
+import { useSelector } from 'react-redux';
 
 function App() {
   return (
@@ -15,7 +18,8 @@ function App() {
         {/* <EventDashBoard /> */}
         <Switch>
           <Route exact path='/' component={HomePage} />
-          <Route exact path='/events' component={EventDashBoard} />
+          <Route exact path='/form' component={EventDashBoard} />
+          <PrivateRoute exact path='/events' component={UserListings} />
         </Switch>
         {/* <Route exact path='/event/:id' component={EventDetailedPage} />
       <Route exact path='/people' component={PeopleDashBoard} />
@@ -26,5 +30,26 @@ function App() {
     </BrowserRouter>
   );
 }
+
+const PrivateRoute = ({ component: Component, ...rest }) => {
+  const auth = useSelector((state) => state.firebase.auth);
+  return (
+    <Route
+      {...rest}
+      render={(props) =>
+        isLoaded(auth) && !isEmpty(auth) ? (
+          <Component {...rest} {...props} />
+        ) : (
+          <Redirect
+            to={{
+              pathname: '/',
+              state: { from: props.location },
+            }}
+          />
+        )
+      }
+    />
+  );
+};
 
 export default App;

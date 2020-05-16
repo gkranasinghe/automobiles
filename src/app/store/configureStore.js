@@ -6,7 +6,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 
 export const configureStore = () => {
   const loggerMiddleware = createLogger();
-  const middlewares = [thunkMiddleware, loggerMiddleware];
+  const middlewares = [thunkMiddleware];
 
   const store = createStore(
     rootReducer,
