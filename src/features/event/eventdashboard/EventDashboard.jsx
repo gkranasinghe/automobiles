@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-
+import { useFirestore } from 'react-redux-firebase';
 import {
   Grid,
   Container,
@@ -13,6 +13,8 @@ import EnquiryPage from '../eventform/EventForm';
 import { useTheme } from '@material-ui/core/styles';
 
 const EventDashboard = () => {
+  const firestore = useFirestore();
+  const { uid } = useSelector((state) => state.firebase.auth);
   // const { displayName, uid } = useSelector((state) => state.firebase.auth);
   // console.log('EventDashboard -> uid', uid);
 
@@ -21,6 +23,19 @@ const EventDashboard = () => {
 
   const dispatch = useDispatch();
   console.log('EventDashboard -> dispatch', dispatch);
+  const handleSubmit = (values) => {
+    console.log('handleSubmit -> values', values);
+    firestore
+      .collection('users')
+      .doc(uid)
+      .collection('listings')
+      .add({ ...values, isSold: false })
+      .then((docRef) => {
+        docRef.update({
+          listingID: docRef.id,
+        });
+      });
+  };
 
   const theme = useTheme();
   const matchXS = useMediaQuery(theme.breakpoints.down(600));
@@ -42,7 +57,11 @@ const EventDashboard = () => {
           </Grid>
           <Grid item xs={matchXS ? '12' : '4'}>
             <Typography>Right Column</Typography>
-            <EnquiryPage dispatch={dispatch} tank={'tank'} />
+            <EnquiryPage
+              dispatch={dispatch}
+              handleSubmit={handleSubmit}
+              tank={'tank'}
+            />
           </Grid>
         </Grid>
       </Container>

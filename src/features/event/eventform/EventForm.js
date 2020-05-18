@@ -145,6 +145,7 @@ const EnquiryPage = ({
     hostedBy: '',
     // email: '',
   },
+  handleSubmit,
   ...rest
 }) => {
   //Do we need to write props as a argument yes
@@ -214,16 +215,18 @@ const EnquiryPage = ({
           onSubmit={(values, actions) => {
             // submit the values to users/{uid}/listings collection
             // check UID is set
-            firestore
-              .collection('users')
-              .doc(uid)
-              .collection('listings')
-              .add({ ...values, isSold: false })
-              .then((docRef) => {
-                docRef.update({
-                  listingID: docRef.id,
-                });
-              });
+            // firestore
+            //   .collection('users')
+            //   .doc(uid)
+            //   .collection('listings')
+            //   .add({ ...values, isSold: false })
+            //   .then((docRef) => {
+            //     docRef.update({
+            //       listingID: docRef.id,
+            //     });
+            //   });
+            console.log('values', values);
+            handleSubmit(values);
 
             // setTimeout(() => {
             //   props.dispatch(allActions.eventActions.createEvent(values));

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 // import firebase from '../../../app/config/firebase';
 import EventListItem from '../../event/eventlist/EventListItem';
+
 import EnquiryPage from '../../event/eventform/EventForm';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useFirestoreConnect, useFirestore } from 'react-redux-firebase';
 import { Grid, Box, Button, Modal } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
@@ -96,24 +97,38 @@ const UpdateButton = ({ listingid, ...rest }) => {
 
   // const history = useHistory();
   console.log('UpdateButton -> listingid', listingid);
+
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const handleUpdate = () => {
+    dispatch({ type: 'UPDATE_EVENT_STARTED', payload: listingid });
+
+    history.push('/updateevent');
+  };
+  return (
+    <>
+      <Button {...rest} onClick={handleUpdate}>
+        UpdateButton
+      </Button>
+    </>
+  );
+};
+
+export const UpdateEventPage = () => {
   const { uid } = useSelector((state) => state.firebase.auth);
+  const listingid = useSelector((state) => state.user.refID);
+  console.log('UpdateEventPage -> listingid', listingid);
   const firestore = useFirestore();
-  const handleUpdate = (values) => {
-    return firestore
+  const handleSubmit = (values) => {
+    console.log('handleSubmit -> values', values);
+    firestore
       .collection('users')
       .doc(uid)
       .collection('listings')
       .doc(listingid)
-      .update(...values);
+      .update(values);
   };
-  return (
-    <>
-      <Button {...rest} onClick={handleOpenForm}>
-        UpdateButton
-      </Button>
-      
-    </>
-  );
+  return <EnquiryPage handleSubmit={handleSubmit} />;
 };
 
 export default UserListings;

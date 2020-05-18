@@ -3,8 +3,11 @@ import { ThemeProvider } from '@material-ui/styles';
 import theme from '../../Theme';
 
 import HomePage from '../../features/home/HomePage';
+import EnquiryPage from '../../features/event/eventform/EventForm';
+
 import EventDashBoard from '../../features/event/eventdashboard/EventDashboard.jsx';
 import UserListings from '../../features/user/userdetailed/UserListings';
+import { UpdateEventPage } from '../../features/user/userdetailed/UserListings';
 import NavBar from '../../features/nav/NavBar/NavBar';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { isLoaded, isEmpty } from 'react-redux-firebase';
@@ -19,6 +22,11 @@ function App() {
         <Switch>
           <Route exact path='/' component={HomePage} />
           <Route exact path='/form' component={EventDashBoard} />
+          <Route
+            exact
+            path='/updateevent'
+            render={(props) => <UpdateEventPage {...props} />}
+          />
           <PrivateRoute exact path='/events' component={UserListings} />
         </Switch>
         {/* <Route exact path='/event/:id' component={EventDetailedPage} />
