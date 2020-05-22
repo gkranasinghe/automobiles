@@ -15,6 +15,11 @@ import {
   CardActions,
   makeStyles,
   TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from '@material-ui/core';
 import { red } from '@material-ui/core/colors';
 import { categories } from '../../app/config/input';
@@ -43,7 +48,8 @@ const HomePage = () => {
         {' '}
         <Box mt={4} mb={2}>
           <Typography variant='h6'>
-            Welcome to automobiles.lk - the largest marketplace in Sri Lanka!
+            Welcome to automobiles.lk - the largest location aware marketplace
+            in Sri Lanka!
           </Typography>
           <Typography variant='caption'>
             Buy and sell everything from used cars to accessories and more in
@@ -69,14 +75,11 @@ const HomePage = () => {
         </Box>
         <Box mb={4}></Box>
         <Divider />
+        {/* Section for Filtering  */}
         <Grid container direction='row'>
-          {' '}
-          <Box mt={2} display='flex' flexDirection='row'>
-            <Box>
-              <Typography variant='overline'>Select by Location </Typography>
-            </Box>
-            {/* <Divider orientation='vertical' flexItem /> */}
-          </Box>
+          <LocationModal />
+
+          {/* <Divider orientation='vertical' flexItem /> */}
           {/* <Box mt={2} display='flex' flexDirection='row'>
             <Box>
               <Typography variant='overline'>Select by Rental </Typography>
@@ -98,6 +101,20 @@ const HomePage = () => {
         <Divider />
         <Box mt={2}>
           <Typography>Browse our top categories</Typography>
+          <Box
+            mt={2}
+            display='flex'
+            flexDirection='row'
+            alignItems='center'
+            //  justifyContent='center'
+          >
+            <Box display='flex'>
+              <LocationOnIcon fontSize='small' />
+            </Box>
+            <Box display='flex'>
+              <Typography variant='overline'>Select by Location </Typography>
+            </Box>
+          </Box>
           <Box mt={4} mb={4}></Box>
 
           <Grid
@@ -155,6 +172,68 @@ const CategoryCard = ({ category }) => {
         </Card>
       </Box>
     </Grid>
+  );
+};
+const LocationModal = () => {
+  //const locationModalStyles = useLocationModalStyles();
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  return (
+    <div>
+      <Button variant='text' color='primary' onClick={handleClickOpen}>
+        <Box
+          display='flex'
+          flexDirection='row'
+          alignItems='center'
+          justifyContent='center'
+        >
+          <Box display='flex'>
+            <LocationOnIcon fontSize='small' />
+          </Box>
+          <Box display='flex'>
+            <Typography variant='overline'>Select by Location </Typography>
+          </Box>
+        </Box>
+      </Button>
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby='form-dialog-title'
+      >
+        <DialogTitle id='form-dialog-title'>Subscribe</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            To subscribe to this website, please enter your email address here.
+            We will send updates occasionally.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin='dense'
+            id='name'
+            label='Email Address'
+            type='email'
+            fullWidth
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color='primary'>
+            Cancel
+          </Button>
+          <Button onClick={handleClose} color='primary'>
+            Subscribe
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   );
 };
 
