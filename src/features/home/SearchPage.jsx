@@ -32,11 +32,11 @@ const SearchPage = () => {
   //QueryString Array should carry the  Query Strings to be concatenated for  QueryRef
   //Each onClick will push strings to queryString Array
   let queryReff = firestore.collectionGroup('listings');
-  let queryRef = firestore
-    .collectionGroup('listings')
+  // let queryRef = firestore
+  //   .collectionGroup('listings')
 
-    .where('city', '==', 'sdas')
-    .where('hostedBy', '==', 'sadas');
+  //   .where('city', '==', 'sdas')
+  //   .where('hostedBy', '==', 'sadas');
 
   Object.entries(query).forEach(([key, value]) => {
     // console.log('SearchPage -> key, value', key, value);
@@ -91,17 +91,7 @@ const SearchPage = () => {
 
   return (
     <>
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Porro ab dolorum
-      placeat commodi iste. Itaque, nesciunt labore impedit quasi dicta, facilis
-      voluptatem deleniti repellendus facere quidem iure doloremque maxime
-      perspiciatis qui reprehenderit rem dignissimos error. Rerum totam
-      veritatis a, quasi quis natus asperiores eligendi sequi mollitia molestiae
-      minus laborum dignissimos error magni cupiditate esse ex maiores nobis
-      beatae hic ullam tempore ad, deserunt ipsam! Laboriosam facilis ad eius.
-      Repellendus nesciunt, facilis ipsum animi cum consequatur quod labore
-      quaerat voluptates suscipit odit quisquam architecto quibusdam optio
-      nostrum, fugit saepe aspernatur! Iste illum ut qui sunt adipisci,
-      dignissimos eligendi nobis natus expedita?
+     
       {value.map((item) => (
         <div>{item.city}</div>
       ))}

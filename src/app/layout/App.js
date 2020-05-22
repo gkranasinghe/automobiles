@@ -2,6 +2,7 @@ import React from 'react';
 import { ThemeProvider } from '@material-ui/styles';
 import theme from '../../Theme';
 import SearchPage from '../../features/home/SearchPage';
+import SearchView from '../../features/home/SearchView';
 import HomePage from '../../features/home/HomePage';
 import EnquiryPage from '../../features/event/eventform/EventForm';
 
@@ -20,7 +21,7 @@ function App() {
         <NavBar />
         {/* <EventDashBoard /> */}
         <Switch>
-          <Route exact path='/' component={SearchPage} />
+          <Route exact path='/' component={HomePage} />
           <Route exact path='/form' component={EventDashBoard} />
           <Route
             exact

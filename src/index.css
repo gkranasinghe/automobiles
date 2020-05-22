@@ -3,7 +3,7 @@ body {
   margin: 0;
   /* overflow-y: scroll; */
   overflow-x: hidden; /* horizontal */
-  background-color: rgb(234, 234, 234);
+  /* background-color: rgb(234, 234, 234); */
 }
 
 /* @font-face {

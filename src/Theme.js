@@ -1,41 +1,51 @@
 import { createMuiTheme } from '@material-ui/core/styles';
 
-const arcBlue = '#2CA6BD';
-const arcOrange = '#ffba60';
+// const primary = '#1a73e8';
+// const secondary = '#202124';
+const primary = '#003152';
+const secondary = '#d4af37';
+const onPrimary = '#ffffff';
+const onSecondary = '#ffffff';
 
 const theme = createMuiTheme({
   palette: {
     common: {
-      blue: `${arcBlue}`,
-      orange: `${arcOrange}`,
+      // blue: `${primary}`,
+      // orange: `${secondary}`,
     },
     primary: {
-      main: `${arcBlue}`,
+      main: `${primary}`,
+      contrastText: `${onPrimary}`,
     },
     secondary: {
-      main: `${arcOrange}`,
+      main: `${secondary}`,
+      contrastText: `${onSecondary}`,
     },
   },
   typography: {
     fontFamily: [
-      'Jost',
+      'Noto Sans JP',
+      'sans-serif',
       'Roboto',
       '-apple-system',
       'BlinkMacSystemFont',
       '"Segoe UI"',
       '"Helvetica Neue"',
       'Arial',
-      'sans-serif',
       '"Apple Color Emoji"',
       '"Segoe UI Emoji"',
       '"Segoe UI Symbol"',
     ].join(','),
     body1: {
-      // fontWeight: 400,
+      fontWeight: 300,
       // fontSize: '0.8rem',
     },
-    h5: {
-      // fontFamily: 'Fira Sans',
+    h3: {
+      // fontWeight: 400,
+    },
+    subtitle2: {
+      textTransform: 'capitalize',
+      // fontWeight: 400,
     },
     content: {},
   },
@@ -46,10 +56,10 @@ const theme = createMuiTheme({
     MuiButton: {
       root: {},
       containedPrimary: {
-        color: '#ffffff',
+        //    color: '#ffffff',
       },
       containedSecondary: {
-        color: '#ffffff',
+        //      color: '#ffffff',
       },
     },
     // Style sheet name ⚛️
