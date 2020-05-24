@@ -169,11 +169,18 @@ const LocationSelectModal = () => {
                 </Tabs>
               </Grid>
               <Grid item>
-                <TabPanel value={value} index={0}>
-                  Item One
-                </TabPanel>
                 {Object.entries(districts).map(([key, data], index) => {
-                  return <TabPanel value={value} index={index}>{data}</TabPanel>;
+                  return (
+                    <TabPanel value={value} index={index}>
+                      {data.map((data) => (
+                        <Grid container direction='column'>
+                          <Button>
+                            <Typography>{data}</Typography>
+                          </Button>
+                        </Grid>
+                      ))}
+                    </TabPanel>
+                  );
                 })}
               </Grid>
             </Grid>
@@ -271,7 +278,7 @@ function TabPanel(props) {
       aria-labelledby={`vertical-tab-${index}`}
       {...other}
     >
-      {value === index && <Box p={3}>{children}</Box>}
+      {value === index && <Box p={1}>{children}</Box>}
     </div>
   );
 }
