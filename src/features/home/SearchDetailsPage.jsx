@@ -52,7 +52,16 @@ const useTabStyles = makeStyles((theme) => ({
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: '100%',
+    //   width: '100%',
+    [theme.breakpoints.up('sm')]: {
+      minWidth: 500,
+    },
+    [theme.breakpoints.up('md')]: {
+      minWidth: 800,
+    },
+    [theme.breakpoints.up('lg')]: {
+      minWidth: 900,
+    },
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
@@ -144,6 +153,9 @@ const LocationSelectModal = () => {
       </Button>
 
       <Dialog
+        scroll='paper'
+        fullScreen={useMediaQuery(theme.breakpoints.down('xs'))}
+        maxWidth='lg'
         open={open}
         onClose={handleClose}
         aria-labelledby='form-dialog-title'
@@ -154,7 +166,7 @@ const LocationSelectModal = () => {
         <DialogContent>
           <div className={classes.root}>
             <Grid container>
-              <Grid item>
+              <Grid item xs={6}>
                 <Tabs
                   orientation='vertical'
                   variant='scrollable'
@@ -168,7 +180,7 @@ const LocationSelectModal = () => {
                   ))}
                 </Tabs>
               </Grid>
-              <Grid item>
+              <Grid item xs={6}>
                 {Object.entries(districts).map(([key, data], index) => {
                   return (
                     <TabPanel value={value} index={index}>
