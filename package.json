@@ -1,5 +1,5 @@
 {
-  "name": "tourtub",
+  "name": "automobiles",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -14,6 +14,7 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "axios": "^0.19.2",
+    "clsx": "^1.1.0",
     "date-fns": "^2.12.0",
     "firebase": "^7.14.3",
     "firestore": "^1.1.6",

@@ -9,4 +9,10 @@ const categories = [
   'other',
 ];
 
-export { categories };
+const districts = {
+  colombo: ['boralesgamuwa', 'nugegoda', 'maharagama', 'piliyandala'],
+  gampaha: ['minuwangoda', 'gampaha', 'negambo'],
+  kaluthara: ['panadura', 'moratuwa'],
+};
+
+export { categories, districts };
