@@ -127,7 +127,10 @@ const LocationSelectModal = () => {
   const handleClickOpen = () => {
     setOpen(true);
   };
-
+  const handleClick = () => (newValue) => {
+    setValue(newValue);
+    console.log('LocationSelectModal -> value', value);
+  };
   const handleClose = () => {
     setOpen(false);
   };
@@ -176,24 +179,25 @@ const LocationSelectModal = () => {
                   className={tabStyles.tabs}
                 >
                   {Object.entries(districts).map(([key], index) => (
-                    <Tab label={key} {...a11yProps(index)} />
+                    // <Tab label={key} {...a11yProps(index)} />
+                    <Button value={index} onClick={handleClick(index)}>
+                      {key}
+                    </Button>
                   ))}
                 </Tabs>
               </Grid>
               <Grid item xs={6}>
-                {Object.entries(districts).map(([key, data], index) => {
+                {/* {districts[value].map((data, index) => {
                   return (
-                    <TabPanel value={value} index={index}>
-                      {data.map((data) => (
-                        <Grid container direction='column'>
-                          <Button>
-                            <Typography>{data}</Typography>
-                          </Button>
-                        </Grid>
-                      ))}
-                    </TabPanel>
+                    <Button index={index}>
+                      <Grid container direction='column'>
+                        <Button>
+                          <Typography>{data}</Typography>
+                        </Button>
+                      </Grid>
+                    </Button>
                   );
-                })}
+                })} */}
               </Grid>
             </Grid>
           </div>
