@@ -1,11 +1,13 @@
 import React from 'react';
 import clsx from 'clsx';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import DriveEtaIcon from '@material-ui/icons/DriveEta';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { districts } from '../../app/config/input';
 import PropTypes from 'prop-types';
-
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import {
   Tab,
   Tabs,
@@ -63,6 +65,21 @@ const useStyles = makeStyles((theme) => ({
       minWidth: 900,
     },
   },
+  dialogPaper: {
+    minHeight: '75vh',
+    //maxHeight: '80vh',
+    //minWidth: '80vw',
+  },
+  secondaryList: {
+    '& .MuiButton-root:hover': {
+      boxShadow: '1px 1px 1px 1px #003152',
+    },
+  },
+
+  active: {
+    //border: '0.6px #d3d3d3 solid',
+    boxShadow: '1px 1px 1px 1px #003152',
+  },
   heading: {
     fontSize: theme.typography.pxToRem(15),
   },
@@ -104,7 +121,7 @@ const SearchDetailsPage = () => {
             <LocationSelectModal />
           </Grid>
           <Grid item xs={6} sm={2} md={2} lg={2}>
-            {/* <VehicleSelectModal /> */}
+            <LocationSelectModal />
           </Grid>
           <Grid item xs></Grid>
         </Grid>
@@ -117,9 +134,10 @@ const LocationSelectModal = () => {
   //const locationModalStyles = useLocationModalStyles();
   const [open, setOpen] = React.useState(false);
   const matchSM = useMediaQuery(theme.breakpoints.down('sm'));
+  const matchXS = useMediaQuery(theme.breakpoints.down('xs'));
   const classes = useStyles();
   const tabStyles = useTabStyles();
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = React.useState();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -127,16 +145,16 @@ const LocationSelectModal = () => {
   const handleClickOpen = () => {
     setOpen(true);
   };
-  const handleClick = () => (newValue) => {
+  const handleClick = (newValue) => {
     setValue(newValue);
-    console.log('LocationSelectModal -> value', value);
+    console.log('handleClick -> newValue', newValue);
   };
   const handleClose = () => {
     setOpen(false);
   };
 
   return (
-    <div>
+    <Box position='relative'>
       <Button variant='text' color='primary' onClick={handleClickOpen}>
         <Box
           display='flex'
@@ -156,48 +174,103 @@ const LocationSelectModal = () => {
       </Button>
 
       <Dialog
+        classes={{ paper: classes.dialogPaper }}
         scroll='paper'
-        fullScreen={useMediaQuery(theme.breakpoints.down('xs'))}
+        fullScreen={matchXS}
+        //  fullScreen={true}
         maxWidth='lg'
         open={open}
         onClose={handleClose}
         aria-labelledby='form-dialog-title'
       >
         <DialogTitle id='form-dialog-title'>
-          Select City or Division
+          <Grid container alignItems='center' justify='space-between'>
+            <Typography variant='h6'>Select City or Division</Typography>
+
+            <IconButton
+              aria-label='close'
+              className={classes.closeButton}
+              onClick={handleClose}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Grid>
         </DialogTitle>
         <DialogContent>
           <div className={classes.root}>
-            <Grid container>
-              <Grid item xs={6}>
-                <Tabs
-                  orientation='vertical'
-                  variant='scrollable'
-                  value={value}
-                  onChange={handleChange}
-                  aria-label='Vertical tabs example'
-                  className={tabStyles.tabs}
-                >
-                  {Object.entries(districts).map(([key], index) => (
-                    // <Tab label={key} {...a11yProps(index)} />
-                    <Button value={index} onClick={handleClick(index)}>
-                      {key}
-                    </Button>
-                  ))}
-                </Tabs>
+            <Grid container spacing={2}>
+              <Grid item xs={6} md={6} lg={6}>
+                <Grid container direction='column'>
+                  {Object.keys(districts).map((key, index) => {
+                    return (
+                      <>
+                        <Box display='flex' pt={0.1} pb={0.1}>
+                          <Button
+                            // disableRipple
+                            fullWidth
+                            key={index}
+                            onClick={() => handleClick(key)}
+                            size='small'
+                            color={key === value ? 'primary' : ''}
+                            //   variant={key === value ? 'outlined' : ''}
+                            className={key === value ? classes.active : ''}
+                          >
+                            <Grid
+                              container
+                              direction='row'
+                              alignItems='center'
+                              justify='space-between'
+                            >
+                              <Typography
+                                variant={matchXS ? 'subtitle2' : 'subtitle2'}
+                              >
+                                {key}
+                              </Typography>
+                              <ArrowForwardIosIcon fontSize='small' />
+                            </Grid>
+                          </Button>
+                        </Box>
+                        <Divider variant='fullWidth' />
+                      </>
+                    );
+                  })}
+                </Grid>
               </Grid>
-              <Grid item xs={6}>
-                {/* {districts[value].map((data, index) => {
-                  return (
-                    <Button index={index}>
-                      <Grid container direction='column'>
-                        <Button>
-                          <Typography>{data}</Typography>
-                        </Button>
-                      </Grid>
-                    </Button>
-                  );
-                })} */}
+
+              <Grid item xs={6} md={6} lg={6}>
+                <Grid container direction='column'>
+                  {districts[value] &&
+                    districts[value].map((data, index) => {
+                      return (
+                        <>
+                          <Box
+                            display='flex'
+                            pt={0.1}
+                            pb={0.1}
+                            className={classes.secondaryList}
+                          >
+                            <Button fullWidth size='small' key={index}>
+                              <Grid
+                                container
+                                direction='row'
+                                alignItems='center'
+                                justify='space-between'
+                              >
+                                <Typography
+                                  variant={matchXS ? 'subtitle2' : 'subtitle2'}
+                                >
+                                  {' '}
+                                  {data}
+                                </Typography>
+                                {/* <ArrowForwardIosIcon fontSize='small' /> */}
+                              </Grid>
+                            </Button>
+                          </Box>
+                          <Divider />
+                        </>
+                      );
+                    })}
+                </Grid>
               </Grid>
             </Grid>
           </div>
@@ -211,7 +284,7 @@ const LocationSelectModal = () => {
           </Button> */}
         </DialogActions>
       </Dialog>
-    </div>
+    </Box>
   );
 };
 
@@ -282,34 +355,5 @@ const LocationSelectModal = () => {
 //     </div>
 //   );
 // };
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role='tabpanel'
-      hidden={value !== index}
-      id={`vertical-tabpanel-${index}`}
-      aria-labelledby={`vertical-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box p={1}>{children}</Box>}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `vertical-tab-${index}`,
-    'aria-controls': `vertical-tabpanel-${index}`,
-  };
-}
 
 export default SearchDetailsPage;
