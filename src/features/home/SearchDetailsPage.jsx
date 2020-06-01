@@ -1,14 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import SearchIcon from '@material-ui/icons/Search';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import DraftsIcon from '@material-ui/icons/Drafts';
+import SendIcon from '@material-ui/icons/Send';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import StarBorder from '@material-ui/icons/StarBorder';
+import MenuIcon from '@material-ui/icons/Menu';
+import DirectionsIcon from '@material-ui/icons/Directions';
 import DriveEtaIcon from '@material-ui/icons/DriveEta';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { districts } from '../../app/config/input';
 import PropTypes from 'prop-types';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import {
+  Paper,
+  AppBar,
+  Toolbar,
   Tab,
   Tabs,
   Box,
@@ -17,6 +29,7 @@ import {
   Container,
   Divider,
   Grid,
+  InputBase,
   Card,
   CardActionArea,
   CardMedia,
@@ -36,23 +49,90 @@ import {
   Chip,
   ExpansionPanelActions,
   useMediaQuery,
+  fade,
+  Collapse,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
+  FormControl,
+  FormLabel,
+  Radio,
+  RadioGroup,
 } from '@material-ui/core';
 import theme from '../../Theme';
 import { formatDistanceStrictWithOptions } from 'date-fns/fp';
-
-const useTabStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.paper,
-    display: 'flex',
-    height: 224,
-  },
-  tabs: {
-    borderRight: `1px solid ${theme.palette.divider}`,
-  },
-}));
+import { red } from '@material-ui/core/colors';
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    padding: '0px 4px',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  input: {
+    marginLeft: theme.spacing(1),
+    flex: 1,
+  },
+  iconButton: {
+    padding: 10,
+  },
+  divider: {
+    height: 28,
+    margin: 4,
+  },
+  search: {
+    position: 'relative',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: fade(theme.palette.common.white, 0.15),
+    '&:hover': {
+      backgroundColor: fade(theme.palette.common.white, 0.25),
+    },
+    marginLeft: 0,
+    width: '100%',
+    [theme.breakpoints.up('sm')]: {
+      marginLeft: theme.spacing(1),
+      width: 'auto',
+    },
+  },
+  searchIcon: {
+    padding: theme.spacing(0, 2),
+    height: '100%',
+    position: 'absolute',
+    pointerEvents: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  inputRoot: {
+    color: 'inherit',
+  },
+  inputInput: {
+    padding: theme.spacing(1, 1, 1, 1),
+    // vertical padding + font size from searchIcon
+    // paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+    transition: theme.transitions.create('width'),
+    width: '50vw',
+    [theme.breakpoints.up(735)]: {
+      width: '10ch',
+      '&:focus': {
+        width: '14ch',
+      },
+    },
+  },
+}));
+const useSideBarStyles = makeStyles((theme) => ({
+  root: {
+    width: '100%',
+    maxWidth: 360,
+    backgroundColor: theme.palette.background.paper,
+  },
+  nested: {
+    paddingLeft: theme.spacing(4),
+  },
+}));
+const useModalStyles = makeStyles((theme) => ({
   root: {
     //   width: '100%',
     [theme.breakpoints.up('sm')]: {
@@ -65,6 +145,7 @@ const useStyles = makeStyles((theme) => ({
       minWidth: 900,
     },
   },
+
   dialogPaper: {
     minHeight: '75vh',
     //maxHeight: '80vh',
@@ -112,20 +193,138 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const SearchDetailsPage = () => {
+  const sideBarStyles = useSideBarStyles();
+  const [open, setOpen] = useState(true);
+  const [typeofAd, settypeofAd] = useState('Wanted');
+  const [transmission, setTransmission] = useState('');
+  const [bodyType, setbodyType] = useState('');
+  const [condition, setCondition] = useState('');
+  const [query, setQuery] = useState({});
+
+  const handleChange = (e) => {
+    //settypeofAd(e.target.value);
+    setQuery({ ...query, [e.target.name]: e.target.value });
+    console.log('handleChange -> e.target.name', e.target.name);
+  };
+  const handleClick = () => {
+    setOpen(!open);
+  };
+  const classes = useStyles();
   return (
-    <>
+    <Paper elevation={0}>
       <Container maxWidth='lg'>
+        <Box mt={2}></Box>
         <Grid container>
-          <Grid item xs={6} sm={2} md={2} lg={2}>
-            <LocationSelectModal />
+          <Grid item xs={6} sm={2} md={2}>
+            <Paper elevation={0}>
+              <LocationSelectModal />
+            </Paper>
           </Grid>
-          <Grid item xs={6} sm={2} md={2} lg={2}>
-            <LocationSelectModal />
+          <Grid item> </Grid>
+          <Grid item xs={6} sm={2} md={2}>
+            <Paper elevation={0}>
+              <LocationSelectModal />
+            </Paper>
           </Grid>
-          <Grid item xs></Grid>
+          <Grid item>
+            <Paper component='form' className={classes.root} elevation={0}>
+              {/* <IconButton className={classes.iconButton} aria-label='menu'>
+                <MenuIcon />
+              </IconButton> */}
+
+              <InputBase
+                classes={{
+                  root: classes.inputRoot,
+                  input: classes.inputInput,
+                }}
+                placeholder='Search Google Maps'
+                inputProps={{ 'aria-label': 'search google maps' }}
+              />
+              <IconButton
+                type='submit'
+                className={classes.iconButton}
+                aria-label='search'
+              >
+                <SearchIcon />
+              </IconButton>
+              <Divider className={classes.divider} orientation='vertical' />
+              <IconButton
+                color='primary'
+                className={classes.iconButton}
+                aria-label='directions'
+              >
+                <DirectionsIcon />
+              </IconButton>
+            </Paper>
+          </Grid>
         </Grid>
+        <Grid container>
+          <Grid item sm={4}>
+            <List
+              component='nav'
+              aria-labelledby='nested-list-subheader'
+              subheader={
+                <ListSubheader component='div' id='nested-list-subheader'>
+                  Nested List Items
+                </ListSubheader>
+              }
+              className={sideBarStyles.root}
+            >
+              <Divider />
+              <ListItem button onClick={handleClick}>
+                <ListItemIcon>
+                  <InboxIcon />
+                </ListItemIcon>
+                <ListItemText primary='Type of Ad' />
+                {open ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+
+
+              <Divider />
+              <ListItem button onClick={handleClick}>
+                <ListItemIcon>
+                  <InboxIcon />
+                </ListItemIcon>
+                <ListItemText primary='Type of Ad' />
+                {open ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+
+              <Collapse in={open} timeout='auto' unmountOnExit>
+                <List component='div' disablePadding>
+                  <FormControl
+                    component='fieldset'
+                    className={sideBarStyles.nested}
+                  >
+                    {/* <FormLabel component='legend'>Type of Ad</FormLabel> */}
+                    <RadioGroup
+                      aria-label='gender'
+                      name='typeofAd'
+                      value={query.typeofAd}
+                      onChange={handleChange}
+                    >
+                      <FormControlLabel
+                        value='For Sale'
+                        control={<Radio />}
+                        label='For Sale'
+                      />
+                      <FormControlLabel
+                        value='Wanted'
+                        control={<Radio />}
+                        label='Wanted'
+                      />
+                    </RadioGroup>
+                  </FormControl>
+                </List>
+              </Collapse>
+              <Divider />
+            </List>
+          </Grid>
+          <Grid item sm={8}></Grid>
+        </Grid>
+        <Box mt={2}></Box>
+        <Divider />
       </Container>
-    </>
+    </Paper>
   );
 };
 
@@ -134,8 +333,8 @@ const LocationSelectModal = () => {
   const [open, setOpen] = React.useState(false);
   const matchSM = useMediaQuery(theme.breakpoints.down('sm'));
   const matchXS = useMediaQuery(theme.breakpoints.down('xs'));
-  const classes = useStyles();
-  const tabStyles = useTabStyles();
+  const modalStyles = useModalStyles();
+
   const [value, setValue] = React.useState();
 
   const handleChange = (event, newValue) => {
@@ -173,7 +372,7 @@ const LocationSelectModal = () => {
       </Button>
 
       <Dialog
-        classes={{ paper: classes.dialogPaper }}
+        sideBarStyles={{ paper: modalStyles.dialogPaper }}
         scroll='paper'
         fullScreen={matchXS}
         //  fullScreen={true}
@@ -188,7 +387,7 @@ const LocationSelectModal = () => {
 
             <IconButton
               aria-label='close'
-              className={classes.closeButton}
+              className={modalStyles.closeButton}
               onClick={handleClose}
             >
               <CloseIcon />
@@ -196,7 +395,7 @@ const LocationSelectModal = () => {
           </Grid>
         </DialogTitle>
         <DialogContent>
-          <div className={classes.root}>
+          <div className={modalStyles.root}>
             <Grid container spacing={2}>
               <Grid item xs={6} md={6} lg={6}>
                 <Grid container direction='column'>
@@ -212,7 +411,7 @@ const LocationSelectModal = () => {
                             size='small'
                             color={key === value ? 'primary' : ''}
                             //   variant={key === value ? 'outlined' : ''}
-                            className={key === value ? classes.active : ''}
+                            className={key === value ? modalStyles.active : ''}
                           >
                             <Grid
                               container
@@ -246,7 +445,7 @@ const LocationSelectModal = () => {
                             display='flex'
                             pt={0.1}
                             pb={0.1}
-                            className={classes.secondaryList}
+                            className={modalStyles.secondaryList}
                           >
                             <Button fullWidth size='small' key={index}>
                               <Grid
