@@ -115,7 +115,6 @@ const SearchDetailsPage = () => {
   return (
     <>
       <Container maxWidth='lg'>
-        {' '}
         <Grid container>
           <Grid item xs={6} sm={2} md={2} lg={2}>
             <LocationSelectModal />
