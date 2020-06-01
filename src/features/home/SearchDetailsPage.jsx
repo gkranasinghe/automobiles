@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import allActions from '../../app/actions';
+import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import IconButton from '@material-ui/core/IconButton';
@@ -193,9 +195,10 @@ const useModalStyles = makeStyles((theme) => ({
 }));
 
 const SearchDetailsPage = () => {
+  //const query = useSelector((state) => state.query);
   const sideBarStyles = useSideBarStyles();
-  const [open, setOpen] = useState(true);
-  const [typeofAd, settypeofAd] = useState('Wanted');
+  const [opentypeofAd, setOpentypeofAd] = useState(true);
+  //const [typeofAd, settypeofAd] = useState('Wanted');
   const [transmission, setTransmission] = useState('');
   const [bodyType, setbodyType] = useState('');
   const [condition, setCondition] = useState('');
@@ -206,10 +209,10 @@ const SearchDetailsPage = () => {
     setQuery({ ...query, [e.target.name]: e.target.value });
     console.log('handleChange -> e.target.name', e.target.name);
   };
-  const handleClick = () => {
-    setOpen(!open);
+  const handleClicktypeofAd = () => {
+    setOpentypeofAd(!opentypeofAd);
   };
-  const classes = useStyles();
+
   return (
     <Paper elevation={0}>
       <Container maxWidth='lg'>
@@ -226,37 +229,7 @@ const SearchDetailsPage = () => {
               <LocationSelectModal />
             </Paper>
           </Grid>
-          <Grid item>
-            <Paper component='form' className={classes.root} elevation={0}>
-              {/* <IconButton className={classes.iconButton} aria-label='menu'>
-                <MenuIcon />
-              </IconButton> */}
-
-              <InputBase
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
-                placeholder='Search Google Maps'
-                inputProps={{ 'aria-label': 'search google maps' }}
-              />
-              <IconButton
-                type='submit'
-                className={classes.iconButton}
-                aria-label='search'
-              >
-                <SearchIcon />
-              </IconButton>
-              <Divider className={classes.divider} orientation='vertical' />
-              <IconButton
-                color='primary'
-                className={classes.iconButton}
-                aria-label='directions'
-              >
-                <DirectionsIcon />
-              </IconButton>
-            </Paper>
-          </Grid>
+          <Grid item></Grid>
         </Grid>
         <Grid container>
           <Grid item sm={4}>
@@ -271,49 +244,17 @@ const SearchDetailsPage = () => {
               className={sideBarStyles.root}
             >
               <Divider />
-              <ListItem button onClick={handleClick}>
+              <ListItem button onClick={handleClicktypeofAd}>
                 <ListItemIcon>
                   <InboxIcon />
                 </ListItemIcon>
                 <ListItemText primary='Type of Ad' />
-                {open ? <ExpandLess /> : <ExpandMore />}
+                {opentypeofAd ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
 
-
-              <Divider />
-              <ListItem button onClick={handleClick}>
-                <ListItemIcon>
-                  <InboxIcon />
-                </ListItemIcon>
-                <ListItemText primary='Type of Ad' />
-                {open ? <ExpandLess /> : <ExpandMore />}
-              </ListItem>
-
-              <Collapse in={open} timeout='auto' unmountOnExit>
+              <Collapse in={opentypeofAd} timeout='auto' unmountOnExit>
                 <List component='div' disablePadding>
-                  <FormControl
-                    component='fieldset'
-                    className={sideBarStyles.nested}
-                  >
-                    {/* <FormLabel component='legend'>Type of Ad</FormLabel> */}
-                    <RadioGroup
-                      aria-label='gender'
-                      name='typeofAd'
-                      value={query.typeofAd}
-                      onChange={handleChange}
-                    >
-                      <FormControlLabel
-                        value='For Sale'
-                        control={<Radio />}
-                        label='For Sale'
-                      />
-                      <FormControlLabel
-                        value='Wanted'
-                        control={<Radio />}
-                        label='Wanted'
-                      />
-                    </RadioGroup>
-                  </FormControl>
+                  <RadioSelect />
                 </List>
               </Collapse>
               <Divider />
@@ -486,72 +427,76 @@ const LocationSelectModal = () => {
   );
 };
 
-// const VehicleSelectModal = () => {
-//   //const locationModalStyles = useLocationModalStyles();
-//   const [open, setOpen] = React.useState(false);
-//   // const matchSM = theme.breakpoints.down('sm');
-//   const matchSM = useMediaQuery(theme.breakpoints.down('sm'));
-//   console.log('LocationModal -> matchSM', matchSM);
+const SearchBar = () => {
+  const classes = useStyles();
+  return (
+    <>
+      {' '}
+      <Paper component='form' className={classes.root} elevation={0}>
+        {/* <IconButton className={classes.iconButton} aria-label='menu'>
+    <MenuIcon />
+  </IconButton> */}
 
-//   const handleClickOpen = () => {
-//     setOpen(true);
-//   };
+        <InputBase
+          classes={{
+            root: classes.inputRoot,
+            input: classes.inputInput,
+          }}
+          placeholder='Search Google Maps'
+          inputProps={{ 'aria-label': 'search google maps' }}
+        />
+        <IconButton
+          type='submit'
+          className={classes.iconButton}
+          aria-label='search'
+        >
+          <SearchIcon />
+        </IconButton>
+        <Divider className={classes.divider} orientation='vertical' />
+        <IconButton
+          color='primary'
+          className={classes.iconButton}
+          aria-label='directions'
+        >
+          <DirectionsIcon />
+        </IconButton>
+      </Paper>
+    </>
+  );
+};
 
-//   const handleClose = () => {
-//     setOpen(false);
-//   };
-
-//   return (
-//     <div>
-//       <Button variant='text' color='primary' onClick={handleClickOpen}>
-//         <Box
-//           display='flex'
-//           flexDirection='row'
-//           alignItems='center'
-//           justifyContent='center'
-//         >
-//           <Box display='flex'>
-//             <DriveEtaIcon fontSize='small' />
-//           </Box>
-//           <Box display='flex'>
-//             <Typography variant='overline'>
-//               {matchSM ? 'Vehicle' : 'Select Vehicle'}
-//             </Typography>
-//           </Box>
-//         </Box>
-//       </Button>
-
-//       <Dialog
-//         open={open}
-//         onClose={handleClose}
-//         aria-labelledby='form-dialog-title'
-//       >
-//         <DialogTitle id='form-dialog-title'>Subscribe</DialogTitle>
-//         <DialogContent>
-//           <DialogContentText>
-//             To subscribe to this website, please enter your email address here.
-//             We will send updates occasionally.
-//           </DialogContentText>
-//           <TextField
-//             autoFocus
-//             margin='dense'
-//             id='name'
-//             label='Email Address'
-//             type='email'
-//             fullWidth
-//           />
-//         </DialogContent>
-//         <DialogActions>
-//           <Button onClick={handleClose} color='primary'>
-//             Cancel
-//           </Button>
-//           <Button onClick={handleClose} color='primary'>
-//             Subscribe
-//           </Button>
-//         </DialogActions>
-//       </Dialog>
-//     </div>
-//   );
-// };
+const RadioSelect = ({ radioselectlist }) => {
+  const sideBarStyles = useSideBarStyles();
+  const typeofAd = useSelector((state) => state.query.typeofAd);
+  const dispatch = useDispatch();
+  const handleChange = (e) => {
+    //settypeofAd(e.target.value);
+    // setQuery({ ...query, [e.target.name]: e.target.value });
+    dispatch(
+      allActions.queryActions.updateQuery({ [e.target.name]: e.target.value })
+    );
+    console.log('handleChange -> e.target.name', e.target.name);
+  };
+  return (
+    <>
+      <FormControl component='fieldset' className={sideBarStyles.nested}>
+        {/* <FormLabel component='legend'>Type of Ad</FormLabel> */}
+        <RadioGroup
+          aria-label='gender'
+          name='typeofAd'
+          value={typeofAd}
+          onChange={handleChange}
+        >
+          <FormControlLabel
+            value='For Sale'
+            control={<Radio />}
+            label='For Sale'
+          />
+          <FormControlLabel value='Wanted' control={<Radio />} label='Wanted' />
+        </RadioGroup>
+      </FormControl>
+    </>
+  );
+};
 
 export default SearchDetailsPage;
