@@ -203,6 +203,7 @@ const SearchDetailsPage = () => {
   const dispatch = useDispatch();
   const sideBarStyles = useSideBarStyles();
   const [opentypeofAd, setOpentypeofAd] = useState(true);
+
   //const [typeofAd, settypeofAd] = useState('Wanted');
   const [transmission, setTransmission] = useState('');
   const [bodyType, setbodyType] = useState('');
@@ -271,31 +272,18 @@ const SearchDetailsPage = () => {
                 </List>
               </Collapse>
               <Divider />
-              {({ opentypeofAd, handleClicktypeofAd }) => {
-                return (
-                  <>
-                    <Divider />
-                    <ListItem button onClick={handleClicktypeofAd}>
-                      <ListItemIcon>
-                        <InboxIcon />
-                      </ListItemIcon>
-                      <ListItemText primary='Type of Ad' />
-                      {opentypeofAd ? <ExpandLess /> : <ExpandMore />}
-                    </ListItem>
-                    <Collapse in={opentypeofAd} timeout='auto' unmountOnExit>
-                      <List component='div' disablePadding>
-                        <RadioSelect
-                          radioselectlist={['Wanted', 'For Sale']}
-                          name={'typeofAd'}
-                          value={query.typeofAd}
-                          handleChange={handleChange}
-                        />
-                      </List>
-                    </Collapse>
-                    <Divider />
-                  </>
-                );
-              }}
+              <QueryFilter
+                selection={['W', 'For Sale']}
+                name={'typeofAd2'}
+                value={query.typeofAd2}
+                handleChange={handleChange}
+              />
+              <QueryFilter
+                selection={['W', 'For Sale']}
+                name={'typeofAd3'}
+                value={query.typeofAd3}
+                handleChange={handleChange}
+              >GOD</QueryFilter>
             </List>
           </Grid>
           <Grid item sm={8}></Grid>
@@ -304,6 +292,38 @@ const SearchDetailsPage = () => {
         <Divider />
       </Container>
     </Paper>
+  );
+};
+
+const QueryFilter = ({ selection, name, value, handleChange, ...rest }) => {
+  const [open, setOpen] = useState(true);
+  const sideBarStyles = useSideBarStyles();
+  const handleClick = () => {
+    setOpen(!open);
+  };
+  return (
+    <>
+      <Divider />
+      <ListItem button onClick={handleClick}>
+        <ListItemIcon>
+          <InboxIcon />
+        </ListItemIcon>
+        <ListItemText primary='Type of Ad' />
+        {open ? <ExpandLess /> : <ExpandMore />}
+      </ListItem>
+      <Collapse in={open} timeout='auto' unmountOnExit>
+        <List component='div' disablePadding>
+          <RadioSelect
+            radioselectlist={selection}
+            name={name} //'typeofAd'
+            value={value} //query.typeofAd
+            handleChange={handleChange}
+          />
+        </List>
+      </Collapse>
+      {/* <Divider /> */}
+      {rest.children}
+    </>
   );
 };
 
