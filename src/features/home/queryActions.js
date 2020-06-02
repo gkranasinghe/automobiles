@@ -1,4 +1,4 @@
-import { UPDATE_QUERY } from './queryConstants';
+import { UPDATE_QUERY, FETCH_STATE } from './queryConstants';
 const updateQuery = (query) => ({
   type: UPDATE_QUERY,
   payload: {
@@ -6,4 +6,8 @@ const updateQuery = (query) => ({
   },
 });
 
-export default { updateQuery };
+const fetchState = () => ({
+  type: FETCH_STATE,
+});
+
+export default { updateQuery, fetchState };

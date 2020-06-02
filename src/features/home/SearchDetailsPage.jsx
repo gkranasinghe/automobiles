@@ -195,18 +195,25 @@ const useModalStyles = makeStyles((theme) => ({
 }));
 
 const SearchDetailsPage = () => {
+  // React.useEffect(() => {
+  //   dispatch(allActions.queryActions.fetchState());
+  // }, []);
   //const query = useSelector((state) => state.query);
+  const query = useSelector((state) => state.query.query);
+  const dispatch = useDispatch();
   const sideBarStyles = useSideBarStyles();
   const [opentypeofAd, setOpentypeofAd] = useState(true);
   //const [typeofAd, settypeofAd] = useState('Wanted');
   const [transmission, setTransmission] = useState('');
   const [bodyType, setbodyType] = useState('');
   const [condition, setCondition] = useState('');
-  const [query, setQuery] = useState({});
+  // const [query, setQuery] = useState({});
 
   const handleChange = (e) => {
     //settypeofAd(e.target.value);
-    setQuery({ ...query, [e.target.name]: e.target.value });
+    dispatch(
+      allActions.queryActions.updateQuery({ [e.target.name]: e.target.value })
+    );
     console.log('handleChange -> e.target.name', e.target.name);
   };
   const handleClicktypeofAd = () => {
@@ -229,7 +236,9 @@ const SearchDetailsPage = () => {
               <LocationSelectModal />
             </Paper>
           </Grid>
-          <Grid item></Grid>
+          <Grid item>
+            <SearchBar />
+          </Grid>
         </Grid>
         <Grid container>
           <Grid item sm={4}>
@@ -251,13 +260,42 @@ const SearchDetailsPage = () => {
                 <ListItemText primary='Type of Ad' />
                 {opentypeofAd ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
-
               <Collapse in={opentypeofAd} timeout='auto' unmountOnExit>
                 <List component='div' disablePadding>
-                  <RadioSelect />
+                  <RadioSelect
+                    radioselectlist={['Wanted', 'For Sale']}
+                    name={'typeofAd'}
+                    value={query.typeofAd}
+                    handleChange={handleChange}
+                  />
                 </List>
               </Collapse>
               <Divider />
+              {({ opentypeofAd, handleClicktypeofAd }) => {
+                return (
+                  <>
+                    <Divider />
+                    <ListItem button onClick={handleClicktypeofAd}>
+                      <ListItemIcon>
+                        <InboxIcon />
+                      </ListItemIcon>
+                      <ListItemText primary='Type of Ad' />
+                      {opentypeofAd ? <ExpandLess /> : <ExpandMore />}
+                    </ListItem>
+                    <Collapse in={opentypeofAd} timeout='auto' unmountOnExit>
+                      <List component='div' disablePadding>
+                        <RadioSelect
+                          radioselectlist={['Wanted', 'For Sale']}
+                          name={'typeofAd'}
+                          value={query.typeofAd}
+                          handleChange={handleChange}
+                        />
+                      </List>
+                    </Collapse>
+                    <Divider />
+                  </>
+                );
+              }}
             </List>
           </Grid>
           <Grid item sm={8}></Grid>
@@ -465,34 +503,26 @@ const SearchBar = () => {
   );
 };
 
-const RadioSelect = ({ radioselectlist }) => {
+const RadioSelect = ({ radioselectlist, name, value, handleChange }) => {
+  console.log('RadioSelect -> value', value);
   const sideBarStyles = useSideBarStyles();
-  const typeofAd = useSelector((state) => state.query.typeofAd);
-  const dispatch = useDispatch();
-  const handleChange = (e) => {
-    //settypeofAd(e.target.value);
-    // setQuery({ ...query, [e.target.name]: e.target.value });
-    dispatch(
-      allActions.queryActions.updateQuery({ [e.target.name]: e.target.value })
-    );
-    console.log('handleChange -> e.target.name', e.target.name);
-  };
+
   return (
     <>
       <FormControl component='fieldset' className={sideBarStyles.nested}>
         {/* <FormLabel component='legend'>Type of Ad</FormLabel> */}
         <RadioGroup
           aria-label='gender'
-          name='typeofAd'
-          value={typeofAd}
+          name={name}
+          value={value}
           onChange={handleChange}
         >
-          <FormControlLabel
-            value='For Sale'
-            control={<Radio />}
-            label='For Sale'
-          />
-          <FormControlLabel value='Wanted' control={<Radio />} label='Wanted' />
+          {radioselectlist &&
+            radioselectlist.map((item) => (
+              <FormControlLabel value={item} control={<Radio />} label={item} />
+            ))}
+
+          {/* <FormControlLabel value='Wanted' control={<Radio />} label='Wanted' /> */}
         </RadioGroup>
       </FormControl>
     </>
