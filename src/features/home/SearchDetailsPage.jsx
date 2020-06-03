@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import allActions from '../../app/actions';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
+import FavoriteIcon from '@material-ui/icons/Favorite';
+import ShareIcon from '@material-ui/icons/Share';
+
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
@@ -62,11 +66,19 @@ import {
   FormLabel,
   Radio,
   RadioGroup,
+  FormGroup,
+  Checkbox,
+  FormHelperText,
+  InputLabel,
+  MenuItem,
+  Select,
+  CardHeader,
+  Avatar,
 } from '@material-ui/core';
 import theme from '../../Theme';
 import { formatDistanceStrictWithOptions } from 'date-fns/fp';
 import { red } from '@material-ui/core/colors';
-
+import cardimage from '../../assets/images/cropped.webp';
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: '0px 4px',
@@ -134,6 +146,25 @@ const useSideBarStyles = makeStyles((theme) => ({
     paddingLeft: theme.spacing(4),
   },
 }));
+
+const useCheckboxStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+  },
+  formControl: {
+    margin: theme.spacing(3),
+  },
+}));
+const useDropDownSelectStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
+}));
+
 const useModalStyles = makeStyles((theme) => ({
   root: {
     //   width: '100%',
@@ -194,6 +225,30 @@ const useModalStyles = makeStyles((theme) => ({
   },
 }));
 
+const useSearchResultCardStyles = makeStyles((theme) => ({
+  root: {
+    Height: 225,
+  },
+  media: {
+    height: 0,
+    // paddingTop: '56.25%', // 16:9
+    paddingTop: '75%',
+  },
+  expand: {
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+    }),
+  },
+  expandOpen: {
+    transform: 'rotate(180deg)',
+  },
+  avatar: {
+    backgroundColor: red[500],
+  },
+}));
+
 const SearchDetailsPage = () => {
   // React.useEffect(() => {
   //   dispatch(allActions.queryActions.fetchState());
@@ -204,18 +259,22 @@ const SearchDetailsPage = () => {
   const sideBarStyles = useSideBarStyles();
   const [opentypeofAd, setOpentypeofAd] = useState(true);
 
-  //const [typeofAd, settypeofAd] = useState('Wanted');
-  const [transmission, setTransmission] = useState('');
-  const [bodyType, setbodyType] = useState('');
-  const [condition, setCondition] = useState('');
-  // const [query, setQuery] = useState({});
-
   const handleChange = (e) => {
     //settypeofAd(e.target.value);
-    dispatch(
-      allActions.queryActions.updateQuery({ [e.target.name]: e.target.value })
-    );
+    if (e.target.type === 'checkbox') {
+      dispatch(
+        allActions.queryActions.updateQuery({
+          [e.target.name]: e.target.checked,
+        })
+      );
+    } else {
+      dispatch(
+        allActions.queryActions.updateQuery({ [e.target.name]: e.target.value })
+      );
+    }
+
     console.log('handleChange -> e.target.name', e.target.name);
+    console.log('handleChange -> e.target.value', e.target.value);
   };
   const handleClicktypeofAd = () => {
     setOpentypeofAd(!opentypeofAd);
@@ -272,21 +331,73 @@ const SearchDetailsPage = () => {
                 </List>
               </Collapse>
               <Divider />
-              <QueryFilter
+              {/* <QueryFilter
                 selection={['W', 'For Sale']}
                 name={'typeofAd2'}
                 value={query.typeofAd2}
                 handleChange={handleChange}
-              />
-              <QueryFilter
+              /> */}
+              {/* <QueryFilter
                 selection={['W', 'For Sale']}
                 name={'typeofAd3'}
                 value={query.typeofAd3}
                 handleChange={handleChange}
-              >GOD</QueryFilter>
+              >
+                {<h1>Hello</h1>}
+              </QueryFilter> */}
+              <QueryFilter>
+                <RadioSelect
+                  radioselectlist={['Wd', 'For Sale']}
+                  name={'typeofAd2'}
+                  value={query.typeofAd2}
+                  handleChange={handleChange}
+                />
+              </QueryFilter>
+              <Divider />
+              {/* <QueryFilter>
+                <CheckBoxSelect
+                  checkboxselectlist={{
+                    apple: query.apple,
+                    pears: query.pears,
+                    jambu: query.jambu,
+                  }}
+                  handleChange={handleChange}
+                />
+              </QueryFilter> */}
+              <QueryFilter>
+                <DropDownSelect
+                  dropdownselectlist={['2020', '2019', '2018']}
+                  name={'yearofmanufacture'}
+                  value={query.yearofmanufacture}
+                  handleChange={handleChange}
+                />
+              </QueryFilter>
+              <QueryFilter>
+                <DropDownSelect
+                  dropdownselectlist={['toyota', 'honda']}
+                  name={'vehiclemake'}
+                  value={query.vehiclemake}
+                  handleChange={handleChange}
+                />
+
+                {query.vehiclemake && (
+                  <DropDownSelect
+                    dropdownselectlist={carmodels[query.vehiclemake]}
+                    name={'vehiclemodel'}
+                    value={query.vehiclemodel}
+                    handleChange={handleChange}
+                  />
+                )}
+              </QueryFilter>
             </List>
           </Grid>
-          <Grid item sm={8}></Grid>
+          <Grid item sm={8}>
+            <SearchResultCard /> <Divider />
+            <SearchResultCard /> <Divider />
+            <SearchResultCard /> <Divider />
+            <SearchResultCard /> <Divider />
+            <SearchResultCard /> <Divider />
+          </Grid>
         </Grid>
         <Box mt={2}></Box>
         <Divider />
@@ -295,12 +406,12 @@ const SearchDetailsPage = () => {
   );
 };
 
-const QueryFilter = ({ selection, name, value, handleChange, ...rest }) => {
-  const [open, setOpen] = useState(true);
-  const sideBarStyles = useSideBarStyles();
+const QueryFilter = (props) => {
+  const [open, setOpen] = useState(false);
   const handleClick = () => {
     setOpen(!open);
   };
+
   return (
     <>
       <Divider />
@@ -313,16 +424,10 @@ const QueryFilter = ({ selection, name, value, handleChange, ...rest }) => {
       </ListItem>
       <Collapse in={open} timeout='auto' unmountOnExit>
         <List component='div' disablePadding>
-          <RadioSelect
-            radioselectlist={selection}
-            name={name} //'typeofAd'
-            value={value} //query.typeofAd
-            handleChange={handleChange}
-          />
+          {props.children}
         </List>
       </Collapse>
-      {/* <Divider /> */}
-      {rest.children}
+      <Divider />
     </>
   );
 };
@@ -523,6 +628,68 @@ const SearchBar = () => {
   );
 };
 
+const CheckBoxSelect = ({ checkboxselectlist, handleChange }) => {
+  const classes = useCheckboxStyles();
+  // const [state, setState] = React.useState({
+  //   gilad: true,
+  //   jason: false,
+  //   antoine: false,
+  // });
+  // const handleChange = (event) => {
+  //   setState({ ...state, [event.target.name]: event.target.checked });
+  // };
+
+  // const { gilad, jason, antoine } = state;
+  //  const error = [gilad, jason, antoine].filter((v) => v).length !== 2;
+  return (
+    <div className={classes.root}>
+      <FormControl component='fieldset' className={classes.formControl}>
+        <FormLabel component='legend'>Assign responsibility</FormLabel>
+        <FormGroup>
+          {/* <FormControlLabel
+            control={
+              <Checkbox checked={gilad} onChange={handleChange} name='gilad' />
+            }
+            label='Gilad Gray'
+          />
+          <FormControlLabel
+            control={
+              <Checkbox checked={jason} onChange={handleChange} name='jason' />
+            }
+            label='Jason Killian'
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={antoine}
+                onChange={handleChange}
+                name='antoine'
+              />
+            }
+            label='Antoine Llorca'
+          /> */}
+          {Object.entries(checkboxselectlist).map(([key, value], index) => (
+            // console.log('CheckBoxSelect -> value', value)
+            <>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={value}
+                    onChange={handleChange}
+                    name={key}
+                  />
+                }
+                label={key}
+              />
+            </>
+          ))}
+        </FormGroup>
+        <FormHelperText>Be careful</FormHelperText>
+      </FormControl>
+    </div>
+  );
+};
+
 const RadioSelect = ({ radioselectlist, name, value, handleChange }) => {
   console.log('RadioSelect -> value', value);
   const sideBarStyles = useSideBarStyles();
@@ -549,4 +716,126 @@ const RadioSelect = ({ radioselectlist, name, value, handleChange }) => {
   );
 };
 
+const DropDownSelect = ({ dropdownselectlist, name, value, handleChange }) => {
+  const classes = useDropDownSelectStyles();
+  return (
+    <FormControl className={classes.formControl}>
+      <InputLabel id='demo-simple-select-label'>Age</InputLabel>
+      <Select
+        labelId='demo-simple-select-label'
+        id='demo-simple-select'
+        value={value}
+        onChange={handleChange}
+        name={name}
+      >
+        {dropdownselectlist.map((item) => (
+          <MenuItem value={item}>{item}</MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  );
+};
+
+const SearchResultCard = () => {
+  const classes = useSearchResultCardStyles();
+  const [expanded, setExpanded] = React.useState(false);
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+  return (
+    <Card className={classes.root}>
+      <CardHeader
+        avatar={
+          <Avatar aria-label='recipe' className={classes.avatar}>
+            R
+          </Avatar>
+        }
+        action={
+          <IconButton aria-label='settings'>
+            <MoreVertIcon />
+          </IconButton>
+        }
+        title='Shrimp and Chorizo Paella'
+        subheader='September 14, 2016'
+      />
+      <Grid container>
+        <Grid item xs={2}>
+          <Box pt={2}>
+            <CardMedia
+              className={classes.media}
+              image={cardimage}
+              title='Paella dish'
+            />
+          </Box>
+        </Grid>
+        <Grid item xs={8}>
+          <CardContent>
+            <Typography variant='body2' color='textSecondary' component='p'>
+              This impressive paella is a perfect party dish and a fun meal to
+              cook together with your guests. Add 1 cup of frozen peas along
+              with the mussels, if you like.
+            </Typography>
+          </CardContent>
+        </Grid>
+      </Grid>
+      {/*  */}
+
+      <CardActions disableSpacing>
+        <IconButton aria-label='add to favorites'>
+          <FavoriteIcon />
+        </IconButton>
+        <IconButton aria-label='share'>
+          <ShareIcon />
+        </IconButton>
+        <IconButton
+          className={clsx(classes.expand, {
+            [classes.expandOpen]: expanded,
+          })}
+          onClick={handleExpandClick}
+          aria-expanded={expanded}
+          aria-label='show more'
+        >
+          <ExpandMoreIcon />
+        </IconButton>
+      </CardActions>
+      <Collapse in={expanded} timeout='auto' unmountOnExit>
+        <CardContent>
+          <Typography paragraph>Method:</Typography>
+          <Typography paragraph>
+            Heat 1/2 cup of the broth in a pot until simmering, add saffron and
+            set aside for 10 minutes.
+          </Typography>
+          <Typography paragraph>
+            Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet
+            over medium-high heat. Add chicken, shrimp and chorizo, and cook,
+            stirring occasionally until lightly browned, 6 to 8 minutes.
+            Transfer shrimp to a large plate and set aside, leaving chicken and
+            chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes,
+            onion, salt and pepper, and cook, stirring often until thickened and
+            fragrant, about 10 minutes. Add saffron broth and remaining 4 1/2
+            cups chicken broth; bring to a boil.
+          </Typography>
+          <Typography paragraph>
+            Add rice and stir very gently to distribute. Top with artichokes and
+            peppers, and cook without stirring, until most of the liquid is
+            absorbed, 15 to 18 minutes. Reduce heat to medium-low, add reserved
+            shrimp and mussels, tucking them down into the rice, and cook again
+            without stirring, until mussels have opened and rice is just tender,
+            5 to 7 minutes more. (Discard any mussels that don’t open.)
+          </Typography>
+          <Typography>
+            Set aside off of the heat to let rest for 10 minutes, and then
+            serve.
+          </Typography>
+        </CardContent>
+      </Collapse>
+    </Card>
+  );
+};
+
+const carmodels = {
+  honda: ['FIT', 'Fielder', 'insight', 'C-HR'],
+  toyota: ['Aqua', 'Axio', 'premio', 'Allion'],
+};
 export default SearchDetailsPage;
