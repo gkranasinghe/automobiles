@@ -78,7 +78,7 @@ import {
 import theme from '../../Theme';
 import { formatDistanceStrictWithOptions } from 'date-fns/fp';
 import { red } from '@material-ui/core/colors';
-import cardimage from '../../assets/images/cropped.webp';
+import cardimage from '../../assets/images/fitted.jpg';
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: '0px 4px',
