@@ -34,7 +34,7 @@ function App() {
             path='/updateevent'
             render={(props) => <UpdateEventPage {...props} />}
           />
-          <PrivateRoute exact path='/events' component={UserListings} />
+          <PrivateRoute exact path='/myads' component={UserListings} />
         </Switch>
         {/* <Route exact path='/event/:id' component={EventDetailedPage} />
       <Route exact path='/people' component={PeopleDashBoard} />

@@ -13,6 +13,10 @@ import {
   makeStyles,
   Container,
   Hidden,
+  Box,
+  Avatar,
+  Menu,
+  MenuItem,
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import logo from '../../../assets/images/bmw-m-series.svg';
@@ -66,6 +70,9 @@ const useHeaderStyles = makeStyles((theme) => ({
 const NavBar = () => {
   const headerStyles = useHeaderStyles();
   const { uid } = useSelector((state) => state.firebase.auth);
+  const { avatarUrl } = useSelector((state) => state.firebase.profile);
+  //console.log('NavBar ->  avatarUrl', avatarUrl);
+
   const firebase = useFirebase();
   return (
     <>
@@ -109,10 +116,16 @@ const NavBar = () => {
               </Grid>
 
               <Grid item>
-                <Grid container wrap='nowrap'>
+                <Grid
+                  container
+                  wrap='nowrap'
+                  alignItems='center'
+                  justify='center'
+                >
                   {uid ? (
                     <>
                       <Button
+                        size='small'
                         variant='contained'
                         color='secondary'
                         component={NavLink}
@@ -121,16 +134,11 @@ const NavBar = () => {
                       >
                         Post Ad
                       </Button>
-                      <Button
-                        variant='contained'
-                        color='default'
-                        className={headerStyles.loginButton}
-                        onClick={() => {
-                          firebase.logout();
-                        }}
-                      >
-                        log out
-                      </Button>
+                      <ImageAvatars
+                        avatarUrl={avatarUrl}
+                        aria-controls='simple-menu'
+                        aria-haspopup='true'
+                      />
                     </>
                   ) : (
                     <>
@@ -168,6 +176,74 @@ const NavBar = () => {
           </Container>
         </Toolbar>
       </AppBar>
+    </>
+  );
+};
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+
+    '& > *': {
+      // margin: theme.spacing(1),
+    },
+  },
+  small: {
+    width: theme.spacing(4),
+    height: theme.spacing(4),
+  },
+}));
+
+const ImageAvatars = ({ avatarUrl }) => {
+  const classes = useStyles();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const firebase = useFirebase();
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  return (
+    <>
+      <Button
+        className={classes.root}
+        aria-controls='simple-menu'
+        aria-haspopup='true'
+        onClick={handleClick}
+      >
+        <Avatar
+          className={classes.small}
+          alt='profile picture'
+          src={avatarUrl}
+        />
+      </Button>
+      <Menu
+        id='simple-menu'
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem
+          component={NavLink}
+          to='/myads'
+          onClick={() => {
+            setAnchorEl(null);
+          }}
+        >
+          My ads
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            firebase.logout();
+            setAnchorEl(null);
+          }}
+        >
+          Logout
+        </MenuItem>
+      </Menu>
     </>
   );
 };
