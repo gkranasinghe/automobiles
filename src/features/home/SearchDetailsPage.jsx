@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
+import { useFirestore } from 'react-redux-firebase';
 import allActions from '../../app/actions';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import LanguageIcon from '@material-ui/icons/Language';
+import LocalOfferIcon from '@material-ui/icons/LocalOffer';
+import AddLocationIcon from '@material-ui/icons/AddLocation';
 import FavoriteIcon from '@material-ui/icons/Favorite';
+import EmojiTransportationIcon from '@material-ui/icons/EmojiTransportation';
 import ShareIcon from '@material-ui/icons/Share';
-
+import FilterListSharpIcon from '@material-ui/icons/FilterListSharp';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
 import IconButton from '@material-ui/core/IconButton';
@@ -24,6 +30,7 @@ import { districts } from '../../app/config/input';
 import PropTypes from 'prop-types';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import {
+  Hidden,
   Paper,
   AppBar,
   Toolbar,
@@ -79,6 +86,8 @@ import theme from '../../Theme';
 import { formatDistanceStrictWithOptions } from 'date-fns/fp';
 import { red } from '@material-ui/core/colors';
 import cardimage from '../../assets/images/fitted.jpg';
+import { categories } from '../../app/config/input';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: '0px 4px',
@@ -228,6 +237,8 @@ const useModalStyles = makeStyles((theme) => ({
 const useSearchResultCardStyles = makeStyles((theme) => ({
   root: {
     Height: 225,
+    '& .MuiCardHeader-root': { paddingBottom: 0 },
+    '& .MuiCardContent-root': { paddingTop: 0 },
   },
   media: {
     height: 0,
@@ -248,19 +259,30 @@ const useSearchResultCardStyles = makeStyles((theme) => ({
     backgroundColor: red[500],
   },
 }));
+const useInputStyles = makeStyles((theme) => ({
+  input: {
+    marginLeft: theme.spacing(1),
+    flex: 1,
+  },
+  iconButton: {
+    padding: 10,
+  },
+  divider: {
+    height: 28,
+    margin: 4,
+  },
+}));
 
 const SearchDetailsPage = () => {
-  // React.useEffect(() => {
-  //   dispatch(allActions.queryActions.fetchState());
-  // }, []);
-  //const query = useSelector((state) => state.query);
+  const firestore = useFirestore();
+  // i++;
+  // console.log('SearchPage -> i', i);
+
+  const [result, setResult] = useState([]);
   const query = useSelector((state) => state.query.query);
   const dispatch = useDispatch();
-  const sideBarStyles = useSideBarStyles();
-  const [opentypeofAd, setOpentypeofAd] = useState(true);
 
   const handleChange = (e) => {
-    //settypeofAd(e.target.value);
     if (e.target.type === 'checkbox') {
       dispatch(
         allActions.queryActions.updateQuery({
@@ -276,8 +298,27 @@ const SearchDetailsPage = () => {
     console.log('handleChange -> e.target.name', e.target.name);
     console.log('handleChange -> e.target.value', e.target.value);
   };
-  const handleClicktypeofAd = () => {
-    setOpentypeofAd(!opentypeofAd);
+
+  const applyFilters = () => {
+    let queryReff = firestore.collectionGroup('listings');
+    Object.entries(query).forEach(([key, value]) => {
+      if (value !== '') queryReff = queryReff.where(key, '==', value);
+    });
+    queryReff
+      .get()
+      .then((querySnapshot) => {
+        console.log('SearchPage -> querySnapshot', querySnapshot);
+
+        const queryData = [];
+        querySnapshot.forEach((doc) => {
+          //  console.log(doc.data());
+          queryData.push(doc.data());
+          // console.log('SearchPage -> queryData.length', queryData.length);
+        });
+        setResult(queryData);
+      })
+
+      .catch((error) => console.log(error));
   };
 
   return (
@@ -285,308 +326,102 @@ const SearchDetailsPage = () => {
       <Container maxWidth='lg'>
         <Box mt={2}></Box>
         <Grid container>
-          <Grid item xs={6} sm={2} md={2}>
-            <Paper elevation={0}>
-              <LocationSelectModal />
-            </Paper>
-          </Grid>
-          <Grid item> </Grid>
-          <Grid item xs={6} sm={2} md={2}>
-            <Paper elevation={0}>
-              <LocationSelectModal />
-            </Paper>
-          </Grid>
-          <Grid item>
+          <Grid xs item>
             <SearchBar />
           </Grid>
         </Grid>
         <Grid container>
-          <Grid item sm={4}>
-            <List
-              component='nav'
-              aria-labelledby='nested-list-subheader'
-              subheader={
-                <ListSubheader component='div' id='nested-list-subheader'>
-                  Nested List Items
-                </ListSubheader>
-              }
-              className={sideBarStyles.root}
-            >
-              <Divider />
-              <ListItem button onClick={handleClicktypeofAd}>
-                <ListItemIcon>
-                  <InboxIcon />
-                </ListItemIcon>
-                <ListItemText primary='Type of Ad' />
-                {opentypeofAd ? <ExpandLess /> : <ExpandMore />}
-              </ListItem>
-              <Collapse in={opentypeofAd} timeout='auto' unmountOnExit>
-                <List component='div' disablePadding>
-                  <RadioSelect
-                    radioselectlist={['Wanted', 'For Sale']}
-                    name={'typeofAd'}
-                    value={query.typeofAd}
-                    handleChange={handleChange}
+          <Grid item xs sm={4} spacing={2}>
+            <Paper elevation={0}>
+              <Box mt={10}></Box>
+              <Box>
+                <Box m={2}>
+                  <InputComponent
+                    query={query}
+                    Icon={LocationOnIcon}
+                    label={'Select District'}
+                    options={Object.keys(districtlist)}
+                    nameprop={'district'}
                   />
-                </List>
-              </Collapse>
-              <Divider />
-              {/* <QueryFilter
-                selection={['W', 'For Sale']}
-                name={'typeofAd2'}
-                value={query.typeofAd2}
-                handleChange={handleChange}
-              /> */}
-              {/* <QueryFilter
-                selection={['W', 'For Sale']}
-                name={'typeofAd3'}
-                value={query.typeofAd3}
-                handleChange={handleChange}
-              >
-                {<h1>Hello</h1>}
-              </QueryFilter> */}
-              <QueryFilter>
-                <RadioSelect
-                  radioselectlist={['Wd', 'For Sale']}
-                  name={'typeofAd2'}
-                  value={query.typeofAd2}
-                  handleChange={handleChange}
-                />
-              </QueryFilter>
-              <Divider />
-              {/* <QueryFilter>
-                <CheckBoxSelect
-                  checkboxselectlist={{
-                    apple: query.apple,
-                    pears: query.pears,
-                    jambu: query.jambu,
-                  }}
-                  handleChange={handleChange}
-                />
-              </QueryFilter> */}
-              <QueryFilter>
-                <DropDownSelect
-                  dropdownselectlist={['2020', '2019', '2018']}
-                  name={'yearofmanufacture'}
-                  value={query.yearofmanufacture}
-                  handleChange={handleChange}
-                />
-              </QueryFilter>
-              <QueryFilter>
-                <DropDownSelect
-                  dropdownselectlist={['toyota', 'honda']}
-                  name={'vehiclemake'}
-                  value={query.vehiclemake}
-                  handleChange={handleChange}
-                />
-
-                {query.vehiclemake && (
-                  <DropDownSelect
-                    dropdownselectlist={carmodels[query.vehiclemake]}
-                    name={'vehiclemodel'}
-                    value={query.vehiclemodel}
-                    handleChange={handleChange}
-                  />
+                </Box>
+                {query.district && (
+                  <Box m={2}>
+                    <InputComponent
+                      query={query}
+                      Icon={AddLocationIcon}
+                      label={'Select City'}
+                      options={districtlist[query.district]}
+                      nameprop={'city'}
+                    />
+                  </Box>
                 )}
-              </QueryFilter>
-            </List>
+                <Box m={2}>
+                  <InputComponent
+                    query={query}
+                    Icon={LocalOfferIcon}
+                    label={'Select Category'}
+                    options={categories}
+                    nameprop={'category'}
+                  />
+                </Box>
+
+                <Box m={2}>
+                  <InputComponent
+                    query={query}
+                    Icon={LanguageIcon}
+                    label={'Select Brand'}
+                    options={Object.keys(brandlist)}
+                    nameprop={'brand'}
+                  />
+                </Box>
+                {query.brand && (
+                  <Box m={2}>
+                    <InputComponent
+                      query={query}
+                      Icon={EmojiTransportationIcon}
+                      label={'Select Model'}
+                      options={brandlist[query.brand]}
+                      nameprop={'model'}
+                    />
+                  </Box>
+                )}
+                {/* <Box m={2}>
+                  <InputComponent
+                    Icon={LocationOnIcon}
+                    label={'Select year of manufacture'}
+                    options={top100Films}
+                    selection={'district'}
+                  />
+                </Box>
+                <Box m={2}>
+                  <InputComponent
+                    Icon={LocationOnIcon}
+                    label={'Select Condition'}
+                    options={top100Films}
+                    selection={'district'}
+                  />
+                </Box> */}
+                <Divider />
+                <Button
+                  variant='contained'
+                  color='primary'
+                  fullWidth
+                  onClick={applyFilters}
+                >
+                  Apply Filters
+                </Button>
+              </Box>
+            </Paper>
           </Grid>
           <Grid item sm={8}>
-            <SearchResultCard /> <Divider />
-            <SearchResultCard /> <Divider />
-            <SearchResultCard /> <Divider />
-            <SearchResultCard /> <Divider />
-            <SearchResultCard /> <Divider />
+            {/* {result && result.map((item) => <SearchResultCard item={item} />)} */}
+            <SearchResultCard item={item} />
           </Grid>
         </Grid>
         <Box mt={2}></Box>
         <Divider />
       </Container>
     </Paper>
-  );
-};
-
-const QueryFilter = (props) => {
-  const [open, setOpen] = useState(false);
-  const handleClick = () => {
-    setOpen(!open);
-  };
-
-  return (
-    <>
-      <Divider />
-      <ListItem button onClick={handleClick}>
-        <ListItemIcon>
-          <InboxIcon />
-        </ListItemIcon>
-        <ListItemText primary='Type of Ad' />
-        {open ? <ExpandLess /> : <ExpandMore />}
-      </ListItem>
-      <Collapse in={open} timeout='auto' unmountOnExit>
-        <List component='div' disablePadding>
-          {props.children}
-        </List>
-      </Collapse>
-      <Divider />
-    </>
-  );
-};
-
-const LocationSelectModal = () => {
-  //const locationModalStyles = useLocationModalStyles();
-  const [open, setOpen] = React.useState(false);
-  const matchSM = useMediaQuery(theme.breakpoints.down('sm'));
-  const matchXS = useMediaQuery(theme.breakpoints.down('xs'));
-  const modalStyles = useModalStyles();
-
-  const [value, setValue] = React.useState();
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleClick = (newValue) => {
-    setValue(newValue);
-    console.log('handleClick -> newValue', newValue);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  return (
-    <Box position='relative'>
-      <Button variant='text' color='primary' onClick={handleClickOpen}>
-        <Box
-          display='flex'
-          flexDirection='row'
-          alignItems='center'
-          justifyContent='center'
-        >
-          <Box display='flex'>
-            <LocationOnIcon fontSize='small' />
-          </Box>
-          <Box display='flex'>
-            <Typography variant='overline'>
-              {matchSM ? 'Location' : 'Select Location'}
-            </Typography>
-          </Box>
-        </Box>
-      </Button>
-
-      <Dialog
-        sideBarStyles={{ paper: modalStyles.dialogPaper }}
-        scroll='paper'
-        fullScreen={matchXS}
-        //  fullScreen={true}
-        maxWidth='lg'
-        open={open}
-        onClose={handleClose}
-        aria-labelledby='form-dialog-title'
-      >
-        <DialogTitle id='form-dialog-title'>
-          <Grid container alignItems='center' justify='space-between'>
-            <Typography variant='h6'>Select City or Division</Typography>
-
-            <IconButton
-              aria-label='close'
-              className={modalStyles.closeButton}
-              onClick={handleClose}
-            >
-              <CloseIcon />
-            </IconButton>
-          </Grid>
-        </DialogTitle>
-        <DialogContent>
-          <div className={modalStyles.root}>
-            <Grid container spacing={2}>
-              <Grid item xs={6} md={6} lg={6}>
-                <Grid container direction='column'>
-                  {Object.keys(districts).map((key, index) => {
-                    return (
-                      <>
-                        <Box display='flex' pt={0.1} pb={0.1}>
-                          <Button
-                            // disableRipple
-                            fullWidth
-                            key={index}
-                            onClick={() => handleClick(key)}
-                            size='small'
-                            color={key === value ? 'primary' : ''}
-                            //   variant={key === value ? 'outlined' : ''}
-                            className={key === value ? modalStyles.active : ''}
-                          >
-                            <Grid
-                              container
-                              direction='row'
-                              alignItems='center'
-                              justify='space-between'
-                            >
-                              <Typography
-                                variant={matchXS ? 'subtitle2' : 'subtitle2'}
-                              >
-                                {key}
-                              </Typography>
-                              <ArrowForwardIosIcon fontSize='small' />
-                            </Grid>
-                          </Button>
-                        </Box>
-                        <Divider variant='fullWidth' />
-                      </>
-                    );
-                  })}
-                </Grid>
-              </Grid>
-
-              <Grid item xs={6} md={6} lg={6}>
-                <Grid container direction='column'>
-                  {districts[value] &&
-                    districts[value].map((data, index) => {
-                      return (
-                        <>
-                          <Box
-                            display='flex'
-                            pt={0.1}
-                            pb={0.1}
-                            className={modalStyles.secondaryList}
-                          >
-                            <Button fullWidth size='small' key={index}>
-                              <Grid
-                                container
-                                direction='row'
-                                alignItems='center'
-                                justify='space-between'
-                              >
-                                <Typography
-                                  variant={matchXS ? 'subtitle2' : 'subtitle2'}
-                                >
-                                  {' '}
-                                  {data}
-                                </Typography>
-                                {/* <ArrowForwardIosIcon fontSize='small' /> */}
-                              </Grid>
-                            </Button>
-                          </Box>
-                          <Divider />
-                        </>
-                      );
-                    })}
-                </Grid>
-              </Grid>
-            </Grid>
-          </div>
-        </DialogContent>
-        <DialogActions>
-          {/* <Button onClick={handleClose} color='primary'>
-            Cancel
-          </Button>
-          <Button onClick={handleClose} color='primary'>
-            Subscribe
-          </Button> */}
-        </DialogActions>
-      </Dialog>
-    </Box>
   );
 };
 
@@ -628,115 +463,91 @@ const SearchBar = () => {
   );
 };
 
-const CheckBoxSelect = ({ checkboxselectlist, handleChange }) => {
-  const classes = useCheckboxStyles();
-  // const [state, setState] = React.useState({
-  //   gilad: true,
-  //   jason: false,
-  //   antoine: false,
-  // });
-  // const handleChange = (event) => {
-  //   setState({ ...state, [event.target.name]: event.target.checked });
-  // };
-
-  // const { gilad, jason, antoine } = state;
-  //  const error = [gilad, jason, antoine].filter((v) => v).length !== 2;
-  return (
-    <div className={classes.root}>
-      <FormControl component='fieldset' className={classes.formControl}>
-        <FormLabel component='legend'>Assign responsibility</FormLabel>
-        <FormGroup>
-          {/* <FormControlLabel
-            control={
-              <Checkbox checked={gilad} onChange={handleChange} name='gilad' />
-            }
-            label='Gilad Gray'
-          />
-          <FormControlLabel
-            control={
-              <Checkbox checked={jason} onChange={handleChange} name='jason' />
-            }
-            label='Jason Killian'
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={antoine}
-                onChange={handleChange}
-                name='antoine'
-              />
-            }
-            label='Antoine Llorca'
-          /> */}
-          {Object.entries(checkboxselectlist).map(([key, value], index) => (
-            // console.log('CheckBoxSelect -> value', value)
-            <>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={value}
-                    onChange={handleChange}
-                    name={key}
-                  />
-                }
-                label={key}
-              />
-            </>
-          ))}
-        </FormGroup>
-        <FormHelperText>Be careful</FormHelperText>
-      </FormControl>
-    </div>
-  );
+// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
+const districtlist = {
+  Ampara: [],
+  Anuradhapura: [],
+  Badulla: [],
+  Batticaloa: [],
+  Colombo: ['Kohuwala', 'Nugegoda'],
+  Galle: [],
+  Gampaha: [],
+  Hambantota: [],
+  Jaffna: [],
+  Kalutara: [],
+  Kandy: [],
+  Kegalle: [],
+  Kilinochchi: [],
+  Kurunegala: [],
+  Mannar: [],
+  Matale: [],
+  Matara: [],
+  Monaragala: [],
+  Mullaitivu: [],
+  'Nuwara Eliya': [],
+  Polonnaruwa: [],
+  Puttalam: [],
+  Ratnapura: [],
+  Trincomalee: [],
+  Vavuniya: [],
 };
-
-const RadioSelect = ({ radioselectlist, name, value, handleChange }) => {
-  console.log('RadioSelect -> value', value);
-  const sideBarStyles = useSideBarStyles();
-
-  return (
-    <>
-      <FormControl component='fieldset' className={sideBarStyles.nested}>
-        {/* <FormLabel component='legend'>Type of Ad</FormLabel> */}
-        <RadioGroup
-          aria-label='gender'
-          name={name}
-          value={value}
-          onChange={handleChange}
-        >
-          {radioselectlist &&
-            radioselectlist.map((item) => (
-              <FormControlLabel value={item} control={<Radio />} label={item} />
-            ))}
-
-          {/* <FormControlLabel value='Wanted' control={<Radio />} label='Wanted' /> */}
-        </RadioGroup>
-      </FormControl>
-    </>
-  );
+const brandlist = {
+  Honda: ['Fit', 'Insight', 'Civic', 'Grace'],
+  Toyota: ['Axio', 'Premio', 'Allion', 'Vitz'],
 };
+const InputComponent = ({ Icon, label, options, nameprop, query }) => {
+  const dispatch = useDispatch();
+  //const classes = useInputStyles();
 
-const DropDownSelect = ({ dropdownselectlist, name, value, handleChange }) => {
-  const classes = useDropDownSelectStyles();
+  const [value, setValue] = React.useState(query[nameprop]);
+  const [inputValue, setInputValue] = React.useState('');
+
   return (
-    <FormControl className={classes.formControl}>
-      <InputLabel id='demo-simple-select-label'>Age</InputLabel>
-      <Select
-        labelId='demo-simple-select-label'
-        id='demo-simple-select'
-        value={value}
-        onChange={handleChange}
-        name={name}
+    <Paper elevation={0} component='form'>
+      <Box
+        display='flex'
+        flexDirection='row'
+        alignItems='center'
+        justifyContent='center'
       >
-        {dropdownselectlist.map((item) => (
-          <MenuItem value={item}>{item}</MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+        <Box display='flex'>
+          <Icon fontSize='default' />
+        </Box>
+        <Box display='flex' m={1}></Box>
+        <Box display='flex'>
+          <Typography variant='su'>
+            <Autocomplete
+              value={value}
+              onChange={(event, newValue) => {
+                setValue(newValue);
+              }}
+              inputValue={inputValue}
+              onInputChange={(event, newInputValue) => {
+                setInputValue(newInputValue);
+                dispatch(
+                  allActions.queryActions.updateQuery({
+                    [nameprop]: newInputValue,
+                  })
+                );
+              }}
+              size='small'
+              fullWidth
+              id='combo-box-demo'
+              options={options}
+              // getOptionLabel={(option) => option[selection]}
+              style={{ width: 300 }}
+              renderInput={(params) => (
+                <TextField {...params} label={label} variant='outlined' />
+              )}
+            />
+          </Typography>
+        </Box>
+      </Box>
+    </Paper>
   );
 };
 
-const SearchResultCard = () => {
+const SearchResultCard = ({ item }) => {
   const classes = useSearchResultCardStyles();
   const [expanded, setExpanded] = React.useState(false);
 
@@ -746,36 +557,61 @@ const SearchResultCard = () => {
   return (
     <Card className={classes.root}>
       <CardHeader
-        avatar={
-          <Avatar aria-label='recipe' className={classes.avatar}>
-            R
-          </Avatar>
-        }
+        // avatar={
+        //   <Avatar aria-label='recipe' className={classes.avatar}>
+        //     R
+        //   </Avatar>
+        // }
         action={
           <IconButton aria-label='settings'>
             <MoreVertIcon />
           </IconButton>
         }
-        title='Shrimp and Chorizo Paella'
-        subheader='September 14, 2016'
+        title={item.title}
+        subheader={item.date}
       />
       <Grid container>
         <Grid item xs={2}>
-          <Box pt={2}>
+          <Box pt={0.5}>
             <CardMedia
               className={classes.media}
-              image={cardimage}
+              // image={cardimage}
               title='Paella dish'
             />
           </Box>
         </Grid>
         <Grid item xs={8}>
           <CardContent>
-            <Typography variant='body2' color='textSecondary' component='p'>
-              This impressive paella is a perfect party dish and a fun meal to
-              cook together with your guests. Add 1 cup of frozen peas along
-              with the mussels, if you like.
-            </Typography>
+            <Grid container direction='column'>
+              <Grid item>
+                <Typography
+                  variant='subtitle1'
+                  color='textSecondary'
+                  component='p'
+                >
+                  {item.mileage}
+                  {' km'}
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography
+                  variant='subtitle1'
+                  color='textSecondary'
+                  component='p'
+                >
+                  {item.district}
+                  {' ,'}
+                  {item.category}
+                </Typography>
+              </Grid>
+
+              <Grid item>
+                <Typography variant='subtitle1' color='secondary' component='p'>
+                  {'Rs '}
+                  {item.price}
+                </Typography>
+              </Grid>
+            </Grid>
           </CardContent>
         </Grid>
       </Grid>
@@ -801,41 +637,34 @@ const SearchResultCard = () => {
       </CardActions>
       <Collapse in={expanded} timeout='auto' unmountOnExit>
         <CardContent>
-          <Typography paragraph>Method:</Typography>
-          <Typography paragraph>
-            Heat 1/2 cup of the broth in a pot until simmering, add saffron and
-            set aside for 10 minutes.
-          </Typography>
-          <Typography paragraph>
-            Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet
-            over medium-high heat. Add chicken, shrimp and chorizo, and cook,
-            stirring occasionally until lightly browned, 6 to 8 minutes.
-            Transfer shrimp to a large plate and set aside, leaving chicken and
-            chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes,
-            onion, salt and pepper, and cook, stirring often until thickened and
-            fragrant, about 10 minutes. Add saffron broth and remaining 4 1/2
-            cups chicken broth; bring to a boil.
-          </Typography>
-          <Typography paragraph>
-            Add rice and stir very gently to distribute. Top with artichokes and
-            peppers, and cook without stirring, until most of the liquid is
-            absorbed, 15 to 18 minutes. Reduce heat to medium-low, add reserved
-            shrimp and mussels, tucking them down into the rice, and cook again
-            without stirring, until mussels have opened and rice is just tender,
-            5 to 7 minutes more. (Discard any mussels that don’t open.)
-          </Typography>
-          <Typography>
-            Set aside off of the heat to let rest for 10 minutes, and then
-            serve.
-          </Typography>
+          <Typography paragraph>{item.description}</Typography>
         </CardContent>
       </Collapse>
     </Card>
   );
 };
 
-const carmodels = {
-  honda: ['FIT', 'Fielder', 'insight', 'C-HR'],
-  toyota: ['Aqua', 'Axio', 'premio', 'Allion'],
+const item = {
+  title: 'Honda Fit GP5 F Grade 2014',
+  date: '05 Jun 2:16 pm',
+  mileage: 2500,
+  price: 4800000,
+  negotiable: true,
+  district: 'Colombo',
+  city: 'Kohuwala',
+  category: 'cars',
+  name: 'Gayan Ranasinghe',
+  contactno: 773337484,
+  brand: 'Honda',
+  model: 'Fit',
+  edition: 'GP5',
+  modelyear: 2014,
+  condition: 'Registered',
+  transmission: 'Automatic',
+  bodytype: 'Saloon',
+  fueltype: 'Petrol',
+  enginecapacity: 1500,
+  description:
+    'CAS - 8***, Peacock Blue Colour, Alloy Wheels, Push Start, Intelligent Key, Dual Air Bags, Multifunction Steering, ABS, DVD Player, Back Camera, Winkler Mirrors, Key Less Entry, Re Trad Mirrors, Power Windows, Power Mirrors, 1st Owner, Excellent Condition, Service Records Available',
 };
 export default SearchDetailsPage;

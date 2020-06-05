@@ -22,8 +22,13 @@ function App() {
         <NavBar />
         {/* <EventDashBoard /> */}
         <Switch>
-          <Route exact path='/' component={SearchDetailsPage} />
-          <Route exact path='/form' component={EventDashBoard} />
+          <Route exact path='/' component={HomePage} />
+          <Route
+            exact
+            path='/SearchDetailsPage'
+            component={SearchDetailsPage}
+          />
+          <Route exact path='/postad' component={EnquiryPage} />
           <Route
             exact
             path='/updateevent'

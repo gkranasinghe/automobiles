@@ -1,4 +1,8 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { useFirebase } from 'react-redux-firebase';
+import { NavLink } from 'react-router-dom';
+//import { useFirestore } from 'react-redux-firebase';
 import {
   Grid,
   AppBar,
@@ -61,6 +65,8 @@ const useHeaderStyles = makeStyles((theme) => ({
 
 const NavBar = () => {
   const headerStyles = useHeaderStyles();
+  const { uid } = useSelector((state) => state.firebase.auth);
+  const firebase = useFirebase();
   return (
     <>
       <AppBar position='static' color='primary' className={headerStyles.appBar}>
@@ -104,20 +110,58 @@ const NavBar = () => {
 
               <Grid item>
                 <Grid container wrap='nowrap'>
-                  <Button
-                    variant='outlined'
-                    color='inherit'
-                    className={headerStyles.loginButton}
-                  >
-                    Log in
-                  </Button>
-                  <Button
-                    variant='outlined'
-                    color='secondary'
-                    className={headerStyles.loginButton}
-                  >
-                    Sign up
-                  </Button>
+                  {uid ? (
+                    <>
+                      <Button
+                        variant='contained'
+                        color='secondary'
+                        component={NavLink}
+                        className={headerStyles.loginButton}
+                        to='/postad'
+                      >
+                        Post Ad
+                      </Button>
+                      <Button
+                        variant='contained'
+                        color='default'
+                        className={headerStyles.loginButton}
+                        onClick={() => {
+                          firebase.logout();
+                        }}
+                      >
+                        log out
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        variant='outlined'
+                        color='inherit'
+                        className={headerStyles.loginButton}
+                        onClick={() => {
+                          firebase.login({
+                            provider: 'google',
+                            type: 'popup',
+                          });
+                        }}
+                      >
+                        Log in
+                      </Button>
+                      <Button
+                        variant='outlined'
+                        color='secondary'
+                        className={headerStyles.loginButton}
+                        onClick={() => {
+                          firebase.login({
+                            provider: 'google',
+                            type: 'popup',
+                          });
+                        }}
+                      >
+                        Sign up
+                      </Button>
+                    </>
+                  )}
                 </Grid>
               </Grid>
             </Grid>

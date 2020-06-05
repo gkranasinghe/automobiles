@@ -1,6 +1,10 @@
 import React from 'react';
+import { Link, NavLink } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import allActions from '../../app/actions';
 import SignIn from '../auth/login/SignIn';
 import LocationOnIcon from '@material-ui/icons/LocationOn';
+import SubscriptionsIcon from '@material-ui/icons/Subscriptions';
 import {
   Box,
   Typography,
@@ -27,6 +31,8 @@ import { categories } from '../../app/config/input';
 const useStyles = makeStyles({
   root: {
     maxWidth: 288,
+    textDecoration: 'none',
+  //  height: 345,
   },
   media: {
     height: 60,
@@ -63,12 +69,23 @@ const HomePage = () => {
         </Box>
         <Box display='flex' flexDirection='row'>
           <Box color='primary' width={120}>
-            <Button variant='contained' color='primary' fullWidth>
+            <Button
+              variant='contained'
+              color='primary'
+              component={NavLink}
+              to='/postad'
+              fullWidth
+            >
               Post Ad
             </Button>
           </Box>
           <Box ml={2}>
-            <Button variant='outlined' color='primary'>
+            <Button
+              variant='outlined'
+              color='primary'
+              component={NavLink}
+              to='/SearchDetailsPage'
+            >
               Search Ads
             </Button>
           </Box>
@@ -77,43 +94,28 @@ const HomePage = () => {
         <Divider />
         {/* Section for Filtering  */}
         <Grid container direction='row'>
-          <LocationModal />
-
-          {/* <Divider orientation='vertical' flexItem /> */}
-          {/* <Box mt={2} display='flex' flexDirection='row'>
-            <Box>
-              <Typography variant='overline'>Select by Rental </Typography>
-            </Box>
-
-            <Box>
-              <form className={classes.root} noValidate autoComplete='off'>
-                <TextField
-                  id='outlined-basic'
-                  label='District'
-                  variant='outlined'
-                  size='small'
-                />
-              </form>
-            </Box>
-          </Box> */}
+          <Box mt={2}>
+            {' '}
+            <SubscriptionModal />
+          </Box>
         </Grid>
-        <Box mb={4}></Box>
+        <Box mb={2}></Box>
         <Divider />
         <Box mt={2}>
-          <Typography>Browse our top categories</Typography>
+          <Typography variant='h6'>Browse our top categories</Typography>
           <Box
-            mt={2}
+            mt={0}
             display='flex'
             flexDirection='row'
             alignItems='center'
             //  justifyContent='center'
           >
-            <Box display='flex'>
+            {/* <Box display='flex'>
               <LocationOnIcon fontSize='small' />
             </Box>
             <Box display='flex'>
               <Typography variant='overline'>Select by Location </Typography>
-            </Box>
+            </Box> */}
           </Box>
           <Box mt={4} mb={4}></Box>
 
@@ -141,40 +143,67 @@ const HomePage = () => {
 
 const CategoryCard = ({ category }) => {
   const classes = useStyles();
+  const dispatch = useDispatch();
   return (
     <Grid item xs={6} sm={4} md={3} lg={3}>
-      <Box m={0.5}>
+      <Box
+        m={0.5}
+        component={Link}
+        to='/SearchDetailsPage'
+        onClick={() =>
+          dispatch(
+            allActions.queryActions.updateQuery({
+              category: category,
+            })
+          )
+        }
+        className={classes.root}
+      >
         <Card className={classes.root}>
-          <CardActionArea>
-            <CardMedia
-              className={classes.media}
-              image='/static/images/cards/contemplative-reptile.jpg'
-              title='Contemplative Reptile'
-            />
-            <CardContent>
-              <Typography gutterBottom variant='h5' component='h2'>
-                <Typography variant='subtitle2'>{category}</Typography>
-              </Typography>
-              <Typography variant='body2' color='textSecondary' component='p'>
-                Lizards are a widespread group of squamate reptiles, with over
-                6,000 species, ranging across all continents except Antarctica
-              </Typography>
-            </CardContent>
-          </CardActionArea>
-          <CardActions>
-            <Button size='small' color='primary'>
-              Share
-            </Button>
-            {/* <Button size='small' color='primary'>
+          <Box>
+            <Grid container direction='column' justify='flex-end' alignItems='center'>
+              {' '}
+              <Grid item>
+                <CardActionArea>
+                  <CardMedia
+                    className={classes.media}
+                    image='/static/images/cards/contemplative-reptile.jpg'
+                    title='Contemplative Reptile'
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant='h5' component='h2'>
+                      <Typography variant='subtitle2'>{category}</Typography>
+                    </Typography>
+                    <Typography
+                      variant='body2'
+                      color='textSecondary'
+                      component='p'
+                    >
+                      Lizards are a widespread group of squamate reptiles, with
+                      over 6,000 species, ranging across all continents except
+                      Antarctica
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Grid>
+              <Grid item>
+                <CardActions>
+                  <Button size='small' color='primary'>
+                    Share
+                  </Button>
+                  {/* <Button size='small' color='primary'>
               Learn More
             </Button> */}
-          </CardActions>
+                </CardActions>
+              </Grid>
+            </Grid>
+          </Box>
         </Card>
       </Box>
     </Grid>
   );
 };
-const LocationModal = () => {
+const SubscriptionModal = () => {
   //const locationModalStyles = useLocationModalStyles();
   const [open, setOpen] = React.useState(false);
 
@@ -196,10 +225,12 @@ const LocationModal = () => {
           justifyContent='center'
         >
           <Box display='flex'>
-            <LocationOnIcon fontSize='small' />
+            <SubscriptionsIcon fontSize='default' color='secondary' />
           </Box>
           <Box display='flex'>
-            <Typography variant='overline'>Select by Location </Typography>
+            <Typography variant='overline' color='secondary'>
+              Subscribe to our news letter
+            </Typography>
           </Box>
         </Box>
       </Button>

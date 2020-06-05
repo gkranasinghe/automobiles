@@ -1,6 +1,6 @@
 import { UPDATE_QUERY, FETCH_STATE } from './queryConstants';
 
-const initialState = { query: { typeofAd: 'Wanted' } };
+const initialState = { query: {} }; //typeofAd: 'Wanted'
 
 const createEvent = (state = initialState, { type, payload }) => {
   switch (type) {
