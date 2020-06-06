@@ -138,18 +138,83 @@ const useFormStyles = makeStyles((theme) => ({
 
 const EnquiryPage = ({
   initialValues = {
-    eventName: '',
-    eventDate: null,
+    name: '',
+    mileage: '',
+    // eventDate: null,
     city: '',
-    venue: '',
-    hostedBy: '',
+    district: '',
+    description: '',
+    price: null,
+    brand: '',
+    model: '',
+    edition: '',
+    contactno: null,
+    condition: '',
+    transmission: '',
+    bodytype: '',
+    fueltype: '',
+    enginecapacity: null,
+
     // email: '',
   },
-  handleSubmit,
+  update = false,
+
   ...rest
 }) => {
   //Do we need to write props as a argument yes
   console.log('initialValues_', initialValues);
+  const handleSubmit = (values) => {
+    console.log('handleSubmit -> values', values);
+    firestore
+      .collection('users')
+      .doc(uid)
+      .collection('listings')
+      .add({ ...values, isSold: false })
+      .then((docRef) => {
+        docRef.update({
+          listingID: docRef.id,
+          eventDate: new Date().toLocaleString('en-GB', {
+            // weekday: 'numeric',
+            // year: 'numeric',
+            day: 'numeric',
+            month: 'long',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: 'true',
+          }),
+        });
+      })
+      .then(() => setSubmitionCompleted(true));
+  };
+
+  const handleUpdate = (values) => {
+    console.log('handleUpdate -> values', values);
+    console.log(
+      'handleUpdate -> initialValues.listingID',
+      initialValues.listingID
+    );
+    firestore
+      .collection('users')
+      .doc(uid)
+      .collection('listings')
+      .doc(initialValues.listingID)
+      .update({
+        ...values,
+        modifiedDate: new Date().toLocaleString('en-GB', {
+          // weekday: 'numeric',
+          // year: 'numeric',
+          day: 'numeric',
+          month: 'long',
+          hour: 'numeric',
+          minute: 'numeric',
+          hour12: 'true',
+        }),
+      })
+      .then(() => setSubmitionCompleted(true))
+      .catch((err) => console.log('handleUpdate -> err', err));
+
+    console.log('handleUpdate -> isSubmitionCompleted', isSubmitionCompleted);
+  };
   // const onSubmit = (values, { dispatch, setSubmitting }) => {
   //   console.log('onSubmit -> dispatch', dispatch);
   //   console.log('onSubmit -> values', values);
@@ -190,22 +255,24 @@ const EnquiryPage = ({
   // };
 
   const validationSchema = Yup.object().shape({
-    eventName: Yup.string().required('Required'),
-    eventDate: Yup.date().nullable().required('Required'),
-    city: Yup.string().required('Required'),
-    venue: Yup.string().required('Required'),
-    hostedBy: Yup.string().required('Required'),
-    // email: Yup.string().email().required('Required'),
+    name: Yup.string().required('Required'),
+    mileage: Yup.number().required('Required'),
+    //eventDate: Yup.date().nullable().required('Required'),
+    // city: Yup.string().required('Required'),
+    // district: Yup.string().required('Required'),
+    // description: Yup.string().required('Required'),
+    // price: Yup.number().required('Required'),
+    // brand: Yup.string().required('Required'),
+    // model: Yup.string().required('Required'),
+    // edition: Yup.string().required('Required'),
+    // contactno: Yup.number().required('Required'),
+    // condition: Yup.string().required('Required'),
+    // transmission: Yup.string().required('Required'),
+    // bodytype: Yup.string().required('Required'),
+    // fueltype: Yup.string().required('Required'),
+    // enginecapacity: Yup.number().required('Required'),
+    //email: Yup.string().email().required('Required'),
   });
-
-  // const initialValues = {
-  //   eventName: '',
-  //   eventDate: null,
-  //   city: '',
-  //   venue: '',
-  //   hostedBy: '',
-  //   // email: '',
-  // };
 
   return (
     <React.Fragment>
@@ -226,7 +293,7 @@ const EnquiryPage = ({
             //     });
             //   });
             console.log('values', values);
-            handleSubmit(values);
+            update ? handleUpdate(values) : handleSubmit(values);
 
             // setTimeout(() => {
             //   props.dispatch(allActions.eventActions.createEvent(values));
@@ -281,29 +348,13 @@ const EnquiryForm = (props) => {
     <Box mt={3} px={3}>
       <Typography className={formStyles.title}>Get in touch</Typography>
       <Typography className={formStyles.content}>
-        We believe you'll get the best advice by talking to someone who has been
-        there. As you fill out the form below, a suggested travel expert will
-        appear on the right. This is someone in your local Kuoni store who has
-        visited the hostedBy you're interested in. You can contact them directly
-        or continue to fill out the form below.
+        Please continue to fill out the form below.
       </Typography>
 
       <Form onSubmit={handleSubmit}>
-        <TextField
-          disabled={isSubmitting}
-          error={errors.eventName && touched.eventName}
-          label='event name *'
-          name='eventName'
-          className={formStyles.textField}
-          value={values.eventName}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          helperText={errors.eventName && touched.eventName && errors.eventName}
-          margin='none'
-          variant='outlined'
-          fullWidth
-        />
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <MyTextField name='name' label='name *' {...props} />
+        <MyTextField name='mileage' label='mileage *' {...props} />
+        {/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <KeyboardDatePicker
             fullWidth
             clearable
@@ -329,48 +380,20 @@ const EnquiryForm = (props) => {
               'aria-label': 'change date',
             }}
           />
-        </MuiPickersUtilsProvider>
-
-        <TextField
-          disabled={isSubmitting}
-          error={errors.city && touched.city}
-          label='city *'
-          name='city'
-          className={formStyles.textField}
-          value={values.city}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          helperText={errors.city && touched.city && errors.city}
-          margin='none'
-          variant='outlined'
-          fullWidth
-        />
-        <TextField
-          error={errors.venue && touched.venue}
-          label='venue'
-          name='venue'
-          className={formStyles.textField}
-          value={values.venue}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          helperText={errors.venue && touched.venue && errors.venue}
-          margin='none'
-          variant='outlined'
-          fullWidth
-        />
-        <TextField
-          error={errors.hostedBy && touched.hostedBy}
-          label='hostedBy'
-          name='hostedBy'
-          className={formStyles.textField}
-          value={values.hostedBy}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          helperText={errors.hostedBy && touched.hostedBy && errors.hostedBy}
-          margin='none'
-          variant='outlined'
-          fullWidth
-        />
+        </MuiPickersUtilsProvider> */}
+        <MyTextField name='city' label='city' {...props} />
+        <MyTextField name='district' label='district' {...props} />
+        <MyTextField name='description' label='description' {...props} />
+        <MyTextField name='price' label='price' {...props} />
+        <MyTextField name='brand' label='brand' {...props} />
+        <MyTextField name='model' label='model' {...props} />
+        <MyTextField name='edition' label='edition' {...props} />
+        <MyTextField name='contactno' label='contactno' {...props} />
+        <MyTextField name='condition' label='condition' {...props} />
+        <MyTextField name='transmission' label='transmission' {...props} />
+        <MyTextField name='bodytype' label='bodytype' {...props} />
+        <MyTextField name='fueltype' label='fueltype' {...props} />
+        <MyTextField name='enginecapacity' label='enginecapacity' {...props} />
         <Grid container justify='center' spacing='1'>
           <Grid item>
             <Button
@@ -414,4 +437,32 @@ const EnquiryForm = (props) => {
   );
 };
 
+const MyTextField = ({
+  values,
+  touched,
+  errors,
+  isSubmitting,
+  handleChange,
+  handleBlur,
+  name,
+  label,
+}) => {
+  const formStyles = useFormStyles();
+  return (
+    <TextField
+      disabled={isSubmitting}
+      error={errors[name] && touched[name]}
+      label={label}
+      name={name}
+      className={formStyles.textField}
+      value={values[name]}
+      onChange={handleChange}
+      onBlur={handleBlur}
+      helperText={errors[name] && touched[name] && errors[name]}
+      margin='none'
+      variant='outlined'
+      fullWidth
+    />
+  );
+};
 export default EnquiryPage;

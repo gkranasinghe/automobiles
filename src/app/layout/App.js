@@ -29,11 +29,16 @@ function App() {
             component={SearchDetailsPage}
           />
           <Route exact path='/postad' component={EnquiryPage} />
-          <Route
+          <PrivateRoute
+            exact
+            path='/updatelisting'
+            component={UpdateEventPage}
+          />
+          {/* <Route
             exact
             path='/updateevent'
             render={(props) => <UpdateEventPage {...props} />}
-          />
+          /> */}
           <PrivateRoute exact path='/myads' component={UserListings} />
         </Switch>
         {/* <Route exact path='/event/:id' component={EventDetailedPage} />

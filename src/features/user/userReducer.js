@@ -4,12 +4,12 @@ import {
   UPDATE_EVENT_FAILURE,
 } from './userConstants';
 
-const initialState = { refID: null, loading: false, error: null };
+const initialState = { listing: null, loading: false, error: null };
 
 const updateEvent = (state = initialState, { type, payload }) => {
   switch (type) {
     case UPDATE_EVENT_STARTED:
-      return { refID: payload, loading: true, error: null };
+      return { listing: payload, loading: true, error: null };
     case UPDATE_EVENT_SUCCESS:
       return {
         ...state,

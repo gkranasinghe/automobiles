@@ -5,6 +5,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import LanguageIcon from '@material-ui/icons/Language';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import AddLocationIcon from '@material-ui/icons/AddLocation';
 import FavoriteIcon from '@material-ui/icons/Favorite';
@@ -547,7 +549,7 @@ const InputComponent = ({ Icon, label, options, nameprop, query }) => {
   );
 };
 
-const SearchResultCard = ({ item }) => {
+export const SearchResultCard = ({ item, handleDelete, handleUpdate }) => {
   const classes = useSearchResultCardStyles();
   const [expanded, setExpanded] = React.useState(false);
 
@@ -618,12 +620,23 @@ const SearchResultCard = ({ item }) => {
       {/*  */}
 
       <CardActions disableSpacing>
-        <IconButton aria-label='add to favorites'>
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton aria-label='share'>
-          <ShareIcon />
-        </IconButton>
+        {handleUpdate && (
+          <IconButton
+            aria-label='edit'
+            onClick={() => handleUpdate(item)}
+          >
+            <EditIcon />
+          </IconButton>
+        )}
+
+        {handleDelete && (
+          <IconButton
+            aria-label='delete'
+            onClick={() => handleDelete(item.listingID)}
+          >
+            <DeleteIcon />
+          </IconButton>
+        )}
         <IconButton
           className={clsx(classes.expand, {
             [classes.expandOpen]: expanded,
